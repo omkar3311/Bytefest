@@ -1,0 +1,162 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: monospace;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #0f172a;
+    color: #e5e7eb;
+}
+
+#navbar {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #020617;
+    color: #38bdf8;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+#main-container {
+    flex: 1;
+    display: flex;
+}
+
+#left-panel {
+    width: 50%;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(circle at top, #1e293b, #020617 70%);
+}
+
+#code-scatter-area {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+}
+
+.code-element {
+    position: absolute;
+    padding: 6px 10px;
+    border-radius: 8px;
+    white-space: nowrap;
+    user-select: none;
+    font-weight: bold;
+    color: #020617;
+    background: linear-gradient(135deg, #38bdf8, #818cf8);
+}
+
+#right-panel {
+    width: 50%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+input {
+    padding: 6px;
+    background: #020617;
+    color: #e5e7eb;
+    border: 1px solid #334155;
+    border-radius: 6px;
+}
+
+button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#load-code-button {
+    background: #16a34a;
+    color: white;
+}
+
+#submit-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+#submit-button {
+    width: 140px;
+    background: #2563eb;
+    color: white;
+}
+
+#editor-container {
+    display: flex;
+    flex: 1;
+    background: #020617;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#line-numbers {
+    padding: 10px 6px;
+    text-align: right;
+    user-select: none;
+    background: #020617;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+#user-code-input {
+    flex: 1;
+    resize: none;
+    border: none;
+    outline: none;
+    padding: 10px;
+    background: transparent;
+    color: #e5e7eb;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+#timer {
+    font-size: 18px;
+    letter-spacing: 1px;
+    color: #cbd5f5;
+}
+
+.timer-green {
+    color: #22c55e;
+}
+
+.timer-yellow {
+    color: #facc15;
+}
+
+.timer-red {
+    color: #ef4444;
+}
+
+.timer-pulse {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
