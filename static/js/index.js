@@ -1,3 +1,4 @@
+console.log("index.js loaded");
 let timerInterval
 let timeLeft = 0
 let floatingElements = []
@@ -41,19 +42,49 @@ function lockEditor() {
     submitBtn.style.cursor = "not-allowed"
 }
 document.getElementById("load-code-button").onclick = async () => {
-    const code = document.getElementById("secret-code-input").value
+    const nameInput = document.getElementById("name")
+    const secretInput = document.getElementById("secret-code-input")
+    const status = document.getElementById("status-message")
+
+    if (!nameInput || !secretInput) {
+        console.error("Input elements not found")
+        return
+    }
+
+    const name = nameInput.value.trim()
+    const secret = secretInput.value.trim()
+
+    if (name === "") {
+        status.innerText = "Name cannot be empty"
+        return
+    }
+
+    if (secret === "") {
+        status.innerText = "Secret code cannot be empty"
+        return
+    }
+
+    const payload = {
+        name: name,
+        secret_code: secret
+    }
+
+    console.log("Sending payload:", payload)
 
     const res = await fetch("/load-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ secret_code: code })
+        body: JSON.stringify(payload)
     })
 
     const data = await res.json()
+
     if (!data.success) {
-        document.getElementById("status-message").innerText = data.message
+        status.innerText = data.message
         return
     }
+
+    status.innerText = `Welcome ${data.user}`
 
     const area = document.getElementById("code-scatter-area")
     area.innerHTML = ""

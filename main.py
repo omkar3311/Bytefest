@@ -18,6 +18,7 @@ int main() {
 """
 
 class LoadRequest(BaseModel):
+    name : str
     secret_code: str
 
 class SubmitRequest(BaseModel):
@@ -30,6 +31,9 @@ def home(request: Request):
 
 @app.post("/load-code")
 def load_code(data: LoadRequest):
+    print("Received:", data)
+    if not data.name.strip():
+        return {"success": False, "message": "Name is required"}
     if data.secret_code != "123":
         return {"success": False, "message": "Invalid secret code"}
 
