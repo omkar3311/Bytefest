@@ -78,7 +78,8 @@ def submit_code(data: SubmitRequest):
         if correct_lines[i].strip() == user_lines[i].strip():
             score += 1
     supabase.table("participants").update({
-        "score": score
+        "score": score,
+        "time" : 120 - data.time_taken 
     }).eq("code", data.secret_code).execute()
 
     return {
