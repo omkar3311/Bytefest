@@ -157,7 +157,6 @@ document.getElementById("load-code-button").onclick = async () => {
     }
     if (!data.success) {
         status.innerText = data.message
-        status.style.color = "red"
         return
     }
     clearInterval(timerInterval);
@@ -202,7 +201,7 @@ document.getElementById("load-code-button").onclick = async () => {
         area.innerHTML = `
             <div style="padding:20px;font-size:16px;line-height:1.5">
                 <h3>🪲 Debugging Challenge</h3>
-                <p>${data.description}</p>
+                <p>${data.description.replace(/\n/g, "<br>")}</p>
             </div>
         `;
 
