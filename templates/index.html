@@ -71,12 +71,13 @@
     </a>
 </footer>
 <script>
-
+document.addEventListener("DOMContentLoaded", () => {
 console.log("index.js loaded");
 let timerInterval
 let timeLeft = 0
 let floatingElements = []
 let animationRunning = false
+let SECRET_CODE = null;
 const textarea = document.getElementById("user-code-input")
 const lineNumbers = document.getElementById("line-numbers")
 
@@ -152,11 +153,11 @@ document.getElementById("load-code-button").onclick = async () => {
     })
 
     const data = await res.json()
-
     if (!data.success) {
         status.innerText = data.message
         return
     }
+    SECRET_CODE = secret;
 
     status.innerText = `Welcome ${name}`
 
@@ -248,7 +249,11 @@ async function submitCode(auto = false) {
     const res = await fetch("/submit-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_code: code, time_taken: timeLeft })
+        body: JSON.stringify({
+            secret_code: SECRET_CODE,
+            user_code: code,
+            time_taken: timeLeft
+        })
     })
 
     const data = await res.json()
@@ -284,6 +289,7 @@ function startTimer() {
         }
     }, 1000)
 } 
+});
 </script>
 
 </body>
