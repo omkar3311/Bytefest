@@ -84,6 +84,7 @@ let animationRunning = false
 let SECRET_CODE = null;
 const textarea = document.getElementById("user-code-input")
 const lineNumbers = document.getElementById("line-numbers")
+let GAME_MODE = "arrange";
 
 function updateLineNumbers() {
     const lines = textarea.value.split("\n").length
@@ -159,38 +160,53 @@ document.getElementById("load-code-button").onclick = async () => {
         status.style.color = "red"
         return
     }
+    clearInterval(timerInterval);
+    timeLeft = data.time_limit;
+    startTimer();
     SECRET_CODE = secret;
+    GAME_MODE = data.mode;
     status.innerText = `Welcome ${name}`
     const area = document.getElementById("code-scatter-area")
     area.innerHTML = ""
-    generateStars()
-    floatingElements = []
-    const rect = area.getBoundingClientRect()
-    data.code_elements.forEach(el => {
-        const d = document.createElement("div")
-        d.className = "code-element"
-        d.innerText = el
-        const x = Math.random() * (rect.width - 100)
-        const y = Math.random() * (rect.height - 40)
-        d.style.transform = `translate(${x}px, ${y}px)`
-        area.appendChild(d)
+    if (GAME_MODE === "arrange") {
+        generateStars();
+        floatingElements = [];
 
-        floatingElements.push({
-            el: d,
-            x: x,
-            y: y,
-            dx: (Math.random() - 0.5) * 0.35,
-            dy: (Math.random() - 0.5) * 0.35
-        })
-    })
+        const rect = area.getBoundingClientRect();
+        data.code_elements.forEach(el => {
+            const d = document.createElement("div");
+            d.className = "code-element";
+            d.innerText = el;
 
-    clearInterval(timerInterval)
-    timeLeft = data.time_limit
-    startTimer()
+            const x = Math.random() * (rect.width - 100);
+            const y = Math.random() * (rect.height - 40);
 
-    if (!animationRunning) {
-        animationRunning = true
-        animate()
+            d.style.transform = `translate(${x}px, ${y}px)`;
+            area.appendChild(d);
+
+            floatingElements.push({
+                el: d,
+                x, y,
+                dx: (Math.random() - 0.5) * 0.35,
+                dy: (Math.random() - 0.5) * 0.35
+            });
+        });
+
+        if (!animationRunning) {
+            animationRunning = true;
+            animate();
+        }
+    }
+
+    if (GAME_MODE === "debug") {
+        area.innerHTML = `
+            <div style="padding:20px;font-size:16px;line-height:1.5">
+                <h3>🪲 Debugging Challenge</h3>
+                <p>${data.description}</p>
+            </div>
+        `;
+
+        document.getElementById("user-code-input").value = data.buggy_code;
     }
 }
 
