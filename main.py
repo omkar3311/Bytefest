@@ -41,6 +41,11 @@ def home(request: Request):
 @app.post("/load-code")
 def load_code(data: LoadRequest):
     print("Received:", data)
+    if data.secret_code == "B-000":
+        return {
+            "success": True,
+            "redirect": "/admin"
+        }
     if not data.name.strip():
         return {"success": False, "message": "Name is required"}
     if data.secret_code not in DEFAULT_CODES:
@@ -87,3 +92,33 @@ def submit_code(data: SubmitRequest):
         "score": score,
         "total": len(correct_lines)
     }
+    
+@app.get("/admin")
+def admin_panel(request: Request):
+    data = supabase.table("participants") \
+        .select("name, score, time") \
+        .execute().data
+    data = [d for d in data if d["name"]]
+    data.sort(
+        key=lambda x: (
+            x["score"] if x["score"] is not None else 0,
+            x["time"] if x["time"] is not None else 0
+        ),
+        reverse=True
+    )
+    ranked = []
+    for i, d in enumerate(data, start=1):
+        ranked.append({
+            "rank": i,
+            "name": d["name"],
+            "score": d["score"] or 0,
+            "time": d["time"] or 0
+        })
+
+    return templates.TemplateResponse(
+        "admin.html",
+        {
+            "request": request,
+            "participants": ranked
+        }
+    )
