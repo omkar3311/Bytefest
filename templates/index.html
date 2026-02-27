@@ -65,7 +65,7 @@
         </div>
 
         <div id="status-message"></div>
-
+        <audio id="end-audio" src="/static/end.mp3" preload="auto"></audio>
     </div>
 
 </div>
@@ -250,6 +250,21 @@ function animate() {
     requestAnimationFrame(animate)
 }
 
+function playEndAudio() {
+    const audio = document.getElementById("end-audio")
+
+    if (!audio) {
+        console.error("end-audio not found")
+        return
+    }
+
+    audio.pause()
+    audio.currentTime = 0
+
+    audio.play().catch(err => {
+        console.error("Audio playback blocked:", err)
+    })
+}
 
 async function submitCode(auto = false) {
     clearInterval(timerInterval)
@@ -268,6 +283,7 @@ async function submitCode(auto = false) {
     })
 
     const data = await res.json()
+    playEndAudio()
     document.getElementById("status-message").innerText =
         `Score: ${data.score}/${data.total}`
 }

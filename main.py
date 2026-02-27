@@ -55,10 +55,10 @@ def load_code(data: LoadRequest):
         if code not in DEFAULT_CODES:
             return {"success": False, "message": "Invalid secret code"}
 
-        result = supabase.table("participants") \
-            .select("code").eq("code", code).execute().data
-        if result:
-            return {"success": False, "message": "This secret code has already been used"}
+        # result = supabase.table("participants") \
+        #     .select("code").eq("code", code).execute().data
+        # if result:
+        #     return {"success": False, "message": "This secret code has already been used"}
 
         supabase.table("participants").upsert({
             "name": data.name,
@@ -83,10 +83,10 @@ def load_code(data: LoadRequest):
         if code not in DEBUG_CODES:
             return {"success": False, "message": "Invalid secret code"}
 
-        result = supabase.table("participants") \
-            .select("code").eq("code", code).execute().data
-        if result:
-            return {"success": False, "message": "This secret code has already been used"}
+        # result = supabase.table("participants") \
+        #     .select("code").eq("code", code).execute().data
+        # if result:
+        #     return {"success": False, "message": "This secret code has already been used"}
 
         supabase.table("participants").upsert({
             "name": data.name,
