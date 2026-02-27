@@ -149,7 +149,7 @@ def submit_code(data: SubmitRequest):
 
     supabase.table("participants").update({
         "score": score,
-        "time": 120 - data.time_taken
+        "time": data.time_taken
     }).eq("code", code).execute()
 
     return {
