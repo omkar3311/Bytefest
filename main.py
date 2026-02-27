@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Form
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi import Query
 from pydantic import BaseModel
@@ -196,3 +197,58 @@ def admin_panel(request: Request, mode: str | None = Query(default=None)):
             "mode": mode or "all"
         }
     )
+    
+    
+    
+# ------------------------------------------------------------------------------
+
+TABLE_NAME = "us"
+
+def user_exists(contact: str) -> bool:
+    response = (
+        supabase.table(TABLE_NAME)
+        .select("contact_number")
+        .eq("contact_number", contact)
+        .execute()
+    )
+    return len(response.data) > 0
+
+@app.get("/register", response_class=HTMLResponse)
+async def register_form(request: Request):
+    success = request.query_params.get("success")
+    error = request.query_params.get("error")
+    return templates.TemplateResponse(
+        "register.html",
+        {
+            "request": request,
+            "success": success == "1",
+            "error": error
+        }
+    )
+
+@app.post("/register")
+async def register_user(
+    fullname: str = Form(...),
+    email: str = Form(...),
+    contact: str = Form(...),
+    college: str = Form(...)
+):
+    email = email.strip().lower()
+
+    if not email.endswith("@gmail.com"):
+        return {"success": False, "message": "Email must end with @gmail.com"}
+
+    if not contact.isdigit() or len(contact) != 10:
+        return {"success": False, "message": "Contact must be exactly 10 digits"}
+
+    # if user_exists(contact):
+    #     return {"success": False, "message": "User already registered"}
+
+    # supabase.table(TABLE_NAME).insert({
+    #     "full_name": fullname,
+    #     "email": email,
+    #     "contact_number": contact,
+    #     "college_name": college
+    # }).execute()
+
+    return {"success": True}

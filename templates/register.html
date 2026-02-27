@@ -117,15 +117,18 @@ button:hover{
     <p>Register Now & Be Part of Innovation 🚀</p>
   {% endif %}
 
-  <form id="form" method="POST" {% if success %}style="display:none"{% endif %}>
-    <input type="text" name="fullname" placeholder="Full Name" required>
-    <input type="tel" name="contact" placeholder="Contact Number" pattern="[0-9]{10}" maxlength="10" required>
-    <input type="text" name="college" placeholder="College Name" required>
-    <button type="submit">Register Now</button>
-    {% if error %}
-      <p class="error">{{ error }}</p>
-    {% endif %}
-  </form>
+  <form id="form">
+  <input type="text" name="fullname" placeholder="Full Name" required>
+  <input type="email" name="email" placeholder="Email (Gmail only)" pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$" required>
+  <input type="tel" name="contact" placeholder="Contact Number" pattern="[0-9]{10}" maxlength="10" required>
+  <input type="text" name="college" placeholder="College Name" required>
+  <button type="submit">Register Now</button>
+  <p class="error" id="error" style="display:none;"></p>
+</form>
+
+<div class="success" id="success" style="display:none;">
+  🎉 Registered Successfully!
+</div>
 
   {% if success %}
     <div class="success" id="success">🎉 Registered Successfully!</div>
@@ -133,9 +136,33 @@ button:hover{
 </div>
 
 <script>
-if(document.getElementById("success")){
-  document.getElementById("form")?.remove()
-}
+const form = document.getElementById("form")
+const errorEl = document.getElementById("error")
+const successEl = document.getElementById("success")
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault()
+
+  errorEl.style.display = "none"
+
+  const formData = new FormData(form)
+
+  const res = await fetch("/register", {
+    method: "POST",
+    body: formData
+  })
+
+  const data = await res.json()
+
+  if (!data.success) {
+    errorEl.innerText = data.message
+    errorEl.style.display = "block"
+    return
+  }
+
+  form.style.display = "none"
+  successEl.style.display = "block"
+})
 </script>
 
 </body>
