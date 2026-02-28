@@ -597,3 +597,9 @@ int factorial(int n) {
         "bugs": 5
     }
 }
+
+QR_DB = {
+    "What framework is used for backend?": "fastapi",
+    "Which language runs in browser?": "javascript",
+    "What field does ML belong to?": "datascience"
+}
