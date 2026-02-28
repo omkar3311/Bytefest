@@ -8,101 +8,198 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
+:root{
+  --bg-dark-1:#000814;
+  --bg-dark-2:#001d3d;
+  --bg-dark-3:#000428;
+  --neon:#00f5ff;
+  --neon-soft:rgba(0,245,255,0.3);
+  --glass-bg:rgba(255,255,255,0.05);
+  --glass-border:rgba(255,255,255,0.1);
+  --text-main:#ffffff;
+  --text-muted:#cfd8dc;
+  --radius-lg:20px;
+  --radius-md:15px;
+  --blur:10px;
+}
+
 *{margin:0;padding:0;box-sizing:border-box;}
 
 body{
   font-family:'Poppins',sans-serif;
-  height:100vh;
-  background:linear-gradient(135deg,#000428,#004e92);
+  min-height:100vh;
+  background:linear-gradient(135deg,var(--bg-dark-3),var(--bg-dark-2),var(--bg-dark-1));
   display:flex;
-  justify-content:center;
+  flex-direction:column;
   align-items:center;
-  color:white;
-  overflow:hidden;
-}
-
-body::before, body::after{
-  content:"";
-  position:absolute;
-  width:400px;
-  height:400px;
-  border-radius:50%;
-  background:rgba(255,255,255,0.1);
-  animation:float 6s infinite alternate ease-in-out;
-}
-
-body::before{top:-100px;left:-100px;}
-body::after{bottom:-120px;right:-120px;}
-
-@keyframes float{
-  from{transform:translateY(0);}
-  to{transform:translateY(30px);}
+  color:var(--text-main);
+  overflow-x:hidden;
 }
 
 .container{
-  width:400px;
+  margin-top:40px;
+  width:100%;
+  max-width:720px;
   padding:40px;
-  border-radius:20px;
-  background:rgba(255,255,255,0.08);
-  backdrop-filter:blur(20px);
-  box-shadow:0 0 30px rgba(0,255,255,0.4);
-  text-align:center;
-  animation:fadeIn 1s ease-in-out;
+  border-radius:var(--radius-lg);
+  background:var(--glass-bg);
+  backdrop-filter:blur(var(--blur));
+  border:1px solid var(--glass-border);
+  box-shadow:0 0 30px var(--neon-soft);
+  animation:fadeIn 1s ease forwards;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(25px);}
+  to{opacity:1;transform:translateY(0);}
 }
 
 h1{
   font-family:'Orbitron',sans-serif;
-  font-size:24px;
+  text-align:center;
   margin-bottom:10px;
 }
 
-p{
-  font-size:14px;
-  margin-bottom:25px;
-  color:#ddd;
+#status-text{
+  text-align:center;
+  color:var(--text-muted);
+  margin-bottom:30px;
+}
+
+.reg-layout{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:25px;
+}
+
+form{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
 }
 
 input{
-  width:100%;
-  padding:12px;
-  margin:10px 0;
-  border:none;
-  border-radius:8px;
+  padding:14px;
+  border-radius:var(--radius-md);
+  background:rgba(255,255,255,0.08);
+  border:1px solid var(--glass-border);
+  color:var(--text-main);
   outline:none;
 }
 
+input:focus{
+  border-color:var(--neon);
+  box-shadow:0 0 12px var(--neon-soft);
+}
+
 button{
-  width:100%;
-  padding:12px;
-  margin-top:15px;
+  padding:14px;
+  border-radius:var(--radius-md);
   border:none;
-  border-radius:8px;
-  font-size:16px;
   font-weight:600;
-  background:linear-gradient(90deg,#00c6ff,#0072ff);
-  color:white;
+  background:linear-gradient(90deg,var(--neon),#00bcd4);
   cursor:pointer;
 }
 
 button:hover{
   transform:scale(1.05);
-  box-shadow:0 0 15px #00c6ff;
+  box-shadow:0 0 25px var(--neon);
 }
 
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(20px);}
-  to{opacity:1;transform:translateY(0);}
+.reg-right{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:15px;
 }
+
+.qr-img{
+  width:180px;
+  border-radius:15px;
+  box-shadow:0 0 20px var(--neon-soft);
+}
+
+.upload-label{
+  width:100%;
+  padding:12px;
+  border-radius:var(--radius-md);
+  border:1px dashed var(--glass-border);
+  text-align:center;
+  cursor:pointer;
+}
+
+.upload-label input{display:none;}
 
 .success{
-  color:#00ffcc;
+  text-align:center;
+  margin-top:20px;
   font-size:18px;
-  font-weight:600;
+  color:var(--neon);
 }
 
 .error{
-  color:red;
-  margin-top:10px;
+  color:#ff5252;
+  font-size:14px;
+  text-align:center;
+}
+
+.footer{
+  margin-top:30px;
+  text-align:center;
+  font-size:13px;
+}
+
+.footer a{
+  color:#b7c2d3;
+  text-decoration:none;
+}
+
+.footer a:hover{color:var(--neon);}
+
+@media(max-width:768px){
+  .container{padding:25px;}
+  .reg-layout{grid-template-columns:1fr;}
+  .qr-img{width:160px;}
+}
+.submit-wrap{
+  display:flex;
+  justify-content:center;
+}
+
+@media(max-width:768px){
+  .reg-layout{
+    display:flex;
+    flex-direction:column;
+  }
+
+  .submit-wrap{
+    order:3;
+    margin-top:20px;
+  }
+
+  .reg-right{
+    order:2;
+  }
+
+  form{
+    order:1;
+  }
+}
+.upi-pay-btn{
+  width:100%;
+  padding:12px;
+  border-radius:15px;
+  text-align:center;
+  font-weight:600;
+  text-decoration:none;
+  color:#000;
+  background:linear-gradient(90deg,#00f5ff,#00bcd4);
+  box-shadow:0 0 20px rgba(0,245,255,0.4);
+}
+
+.upi-pay-btn:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 30px rgba(0,245,255,0.7);
 }
 </style>
 </head>
@@ -111,59 +208,71 @@ button:hover{
 
 <div class="container">
   <h1>BYTEFEST 2026</h1>
-    {% if success %}
-    <p>You’re officially part of ByteFest 2026 🎉</p>
-  {% else %}
-    <p>Register Now & Be Part of Innovation 🚀</p>
-  {% endif %}
+  <p id="status-text">Register Now & Be Part of Innovation 🚀</p>
 
-  <form id="form">
-  <input type="text" name="fullname" placeholder="Full Name" required>
-  <input type="email" name="email" placeholder="Email (Gmail only)" pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$" required>
-  <input type="tel" name="contact" placeholder="Contact Number" pattern="[0-9]{10}" maxlength="10" required>
-  <input type="text" name="college" placeholder="College Name" required>
-  <button type="submit">Register Now</button>
-  <p class="error" id="error" style="display:none;"></p>
+  <div class="reg-layout">
+    <form id="form">
+  <input name="fullname" placeholder="Full Name" required>
+  <input type="email" name="email" placeholder="Gmail only" required>
+  <input name="contact" placeholder="Contact Number" maxlength="10" required>
+  <input name="college" placeholder="College Name" required>
+
+  <input 
+    name="utr"
+    placeholder="UPI Transaction ID (UTR)"
+    required
+  >
 </form>
-
-<div class="success" id="success" style="display:none;">
-  🎉 Registered Successfully!
+    <div class="reg-right" id="qr-section">
+      <img src="/static/reg-qr.png" class="qr-img">
+      <a 
+        href="upi://pay?pa=sakshisutar612@oksbi&pn=ByteFest&am=100&cu=INR&tn=Registration%20fee"
+        class="upi-pay-btn">
+        Pay ₹100 via UPI
+      </a>
+    </div>
+  </div>
+  <p class="error" id="error" style="display:none;"></p>
+  <div class="submit-wrap" id="submit-wrap">
+  <button type="submit" form="form">Register</button>
+  </div>
+    <p class="success" id="success" style="display:none;">
+    Registration Successful 🎉
+  </p>
 </div>
 
-  {% if success %}
-    <div class="success" id="success">🎉 Registered Successfully!</div>
-  {% endif %}
-</div>
+<footer class="footer">
+  <a href="https://github.com/omkar3311" target="_blank">Developed by Omkar Waghmare</a>
+</footer>
 
 <script>
 const form = document.getElementById("form")
 const errorEl = document.getElementById("error")
-const successEl = document.getElementById("success")
+const statusText = document.getElementById("status-text")
 
-form.addEventListener("submit", async (e) => {
+form.addEventListener("submit", async e => {
   e.preventDefault()
-
   errorEl.style.display = "none"
 
-  const formData = new FormData(form)
+  const data = new FormData(form)
 
   const res = await fetch("/register", {
     method: "POST",
-    body: formData
+    body: data
   })
 
-  const data = await res.json()
+  const json = await res.json()
 
-  if (!data.success) {
-    errorEl.innerText = data.message
+  if (!json.success) {
+    errorEl.innerText = json.message
     errorEl.style.display = "block"
     return
   }
 
   form.style.display = "none"
-  successEl.style.display = "block"
+  document.getElementById("submit-wrap").style.display = "none"
+  statusText.innerText = "Registration received. Payment verification pending ⏳"
 })
 </script>
-
 </body>
 </html>
