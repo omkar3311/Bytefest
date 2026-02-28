@@ -49,7 +49,7 @@ def load_code(data: LoadRequest):
     name = data.name.strip()
 
     if code == "B-000":
-        return {"success": True, "redirect": "/admin"}
+        return {"success": True, "redirect": "/admin?mode=arrange"}
 
     if code == "D-000":
         return {"success": True, "redirect": "/admin?mode=debug"}
@@ -127,27 +127,69 @@ def submit_code(data: SubmitRequest):
 
 @app.get("/admin")
 def admin_panel(request: Request, mode: str | None = Query(default=None)):
-    rows = supabase.table("participant").select("*").execute().data
-    rows = [r for r in rows if r["name"]]
+    if mode == "arrange":
+        rows = (
+            supabase
+            .table("participant")
+            .select("name, mode, B-score, B-time")
+            .eq("mode", "arrange")
+            .order("B-score", desc=True)
+            .order("B-time", desc=True)
+            .execute()
+            .data
+        )
 
+        ranked = [
+            {
+                "rank": i + 1,
+                "name": r["name"],
+                "score": r["B-score"],
+                "time": r["B-time"],
+                "mode": "arrange"
+            }
+            for i, r in enumerate(rows)
+        ]
+
+        return templates.TemplateResponse(
+            "admin.html",
+            {
+                "request": request,
+                "participants": ranked,
+                "mode": "arrange"
+            }
+        )
+        
     if mode == "debug":
-        rows.sort(key=lambda x: ((x["D-score"] or 0), -(x["D-time"] or 9999)), reverse=True)
-    elif mode == "arrange":
-        rows.sort(key=lambda x: ((x["B-score"] or 0), -(x["B-time"] or 9999)), reverse=True)
+        rows = (
+            supabase
+            .table("participant")
+            .select("name, mode, D-score, D-time")
+            .eq("mode", "debug")
+            .order("D-score", desc=True)
+            .order("D-time", desc=True)
+            .execute()
+            .data
+        )
 
-    ranked = [{
-        "rank": i + 1,
-        "name": r["name"],
-        "score": r["D-score"] if r["mode"] == "debug" else r["B-score"],
-        "time": r["D-time"] if r["mode"] == "debug" else r["B-time"],
-        "mode": r["mode"]
-    } for i, r in enumerate(rows)]
+        ranked = [
+            {
+                "rank": i + 1,
+                "name": r["name"],
+                "score": r["D-score"],
+                "time": r["D-time"],
+                "mode": "debug"
+            }
+            for i, r in enumerate(rows)
+        ]
 
-    return templates.TemplateResponse("admin.html", {
-        "request": request,
-        "participants": ranked,
-        "mode": mode or "all"
-    })
+        return templates.TemplateResponse(
+            "admin.html",
+            {
+                "request": request,
+                "participants": ranked,
+                "mode": "debug"
+            }
+        )
 
 @app.get("/register", response_class=HTMLResponse)
 def register_form(request: Request):

@@ -104,7 +104,16 @@
 </head>
 <body>
 
-<h2>🏆 Leaderboard</h2>
+<h2>
+    🏆
+    {% if mode == "arrange" %}
+        Arrange Leaderboard
+    {% elif mode == "debug" %}
+        Debug Leaderboard
+    {% else %}
+        Leaderboard
+    {% endif %}
+</h2>
 
 <div class="table-wrapper">
     <table>
