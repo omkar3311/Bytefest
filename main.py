@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, Form, Query
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse,RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from supabase import create_client
@@ -187,3 +187,38 @@ def get_answer(data: QRScanRequest):
 @app.post("/submit-result")
 def submit_result(data: ResultRequest):
     return {"status": "saved"}
+
+@app.get("/approve")
+def approve_get(request: Request):
+    rows = (
+        supabase
+        .table("participant")
+        .select("id, name, gmail, fee, auth")
+        .order("id", desc=True)
+        .execute()
+        .data
+    )
+
+    return templates.TemplateResponse(
+        "approve.html",
+        {"request": request, "users": rows}
+    )
+
+@app.post("/approve")
+def approve_post(
+    user_id: int = Form(...),
+    action: str = Form(...)
+):
+    if action == "approve":
+        supabase.table("participant") \
+            .update({"auth": True}) \
+            .eq("id", user_id) \
+            .execute()
+
+    elif action == "decline":
+        supabase.table("participant") \
+            .delete() \
+            .eq("id", user_id) \
+            .execute()
+
+    return RedirectResponse("/approve", status_code=303)
