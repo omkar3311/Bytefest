@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QR Code Generator</title>
+    <style>
+        :root{
+  --bg-dark-1:#000814;
+  --bg-dark-2:#001d3d;
+  --bg-dark-3:#000428;
+  --neon:#00f5ff;
+  --neon-soft:rgba(0,245,255,0.35);
+  --glass-bg:rgba(255,255,255,0.06);
+  --glass-border:rgba(255,255,255,0.15);
+  --text-main:#ffffff;
+  --text-muted:#cfd8dc;
+  --radius-lg:20px;
+  --radius-md:14px;
+  --blur:14px;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:'Poppins',sans-serif;
+  min-height:100vh;
+  background:linear-gradient(135deg,var(--bg-dark-3),var(--bg-dark-2),var(--bg-dark-1));
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:var(--text-main);
+}
+
+.container{
+  width:100%;
+  max-width:750px;
+  padding:40px;
+  border-radius:var(--radius-lg);
+  background:var(--glass-bg);
+  backdrop-filter:blur(var(--blur));
+  border:1px solid var(--glass-border);
+  box-shadow:0 0 35px var(--neon-soft);
+  animation:fadeIn 0.8s ease forwards;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(25px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+h1{
+  font-family:'Orbitron',sans-serif;
+  text-align:center;
+  margin-bottom:8px;
+}
+
+.subtitle{
+  text-align:center;
+  color:var(--text-muted);
+  margin-bottom:30px;
+}
+
+.layout{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:25px;
+}
+
+form{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+input{
+  padding:14px;
+  border-radius:var(--radius-md);
+  background:rgba(255,255,255,0.1);
+  border:1px solid var(--glass-border);
+  color:var(--text-main);
+  outline:none;
+}
+
+input::placeholder{
+  color:#b0bec5;
+}
+
+input:focus{
+  border-color:var(--neon);
+  box-shadow:0 0 12px var(--neon-soft);
+}
+
+button{
+  padding:14px;
+  border-radius:var(--radius-md);
+  border:none;
+  font-weight:600;
+  background:linear-gradient(90deg,var(--neon),#00bcd4);
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 30px var(--neon);
+}
+
+.qr-box{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:15px;
+}
+
+.qr-img{
+  width:190px;
+  border-radius:15px;
+  box-shadow:0 0 25px var(--neon-soft);
+}
+
+.download-btn{
+  text-decoration:none;
+  width:100%;
+}
+
+.download-btn button{
+  width:100%;
+}
+
+.footer{
+  margin-top:30px;
+  text-align:center;
+  font-size:13px;
+  opacity:0.9;
+}
+
+.footer a{
+  color:var(--text-muted);
+  text-decoration:none;
+  padding:8px 16px;
+  border-radius:12px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--glass-border);
+  transition:0.3s;
+  display:inline-block;
+}
+
+.footer a span{
+  color:var(--neon);
+  font-weight:600;
+}
+
+.footer a:hover{
+  color:#fff;
+  box-shadow:0 0 18px var(--neon-soft);
+  transform:translateY(-2px);
+}
+
+@media(max-width:768px){
+  .layout{
+    grid-template-columns:1fr;
+  }
+}
+    </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>QR Generator</h1>
+  <p class="subtitle">Convert your question into a QR code</p>
+
+  <div class="layout">
+
+    <form method="post" action="/generate">
+      <input 
+        type="text" 
+        name="question" 
+        placeholder="Enter your question here"
+        required
+      >
+      <button type="submit">Generate QR</button>
+    </form>
+
+    <div class="qr-box">
+      {% if qr_path %}
+        <img src="{{ qr_path }}" class="qr-img">
+        <a href="/download/{{ qr_path.split('/')[-1] }}" class="download-btn">
+          <button>Download QR</button>
+        </a>
+      {% else %}
+        <p class="subtitle">QR will appear here</p>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <footer class="footer">
+  <a href="https://github.com/omkar3311"
+     target="_blank"
+     rel="noopener noreferrer">
+    Developed by <span>Omkar Waghmare</span>
+  </a>
+</footer>
+</div>
+
+</body>
+</html>

@@ -1,11 +1,13 @@
 from fastapi import FastAPI, Request, Form, Query
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse,RedirectResponse
+from fastapi.responses import HTMLResponse,RedirectResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from supabase import create_client
 from dotenv import load_dotenv
 import os
+import qrcode
+import uuid
 from utility import DEFAULT_CODES, DEBUG_CODES, QR_DB
 
 load_dotenv()
@@ -264,3 +266,45 @@ def approve_post(
             .execute()
 
     return RedirectResponse("/approve", status_code=303)
+
+QR_DIR = "static/qr"
+os.makedirs(QR_DIR, exist_ok=True)
+
+@app.get("/generate", response_class=HTMLResponse)
+def home(request: Request):
+    return templates.TemplateResponse("qr_genrator.html", {
+        "request": request,
+        "qr_path": None
+    })
+
+
+@app.post("/generate", response_class=HTMLResponse)
+def generate_qr(request: Request, question: str = Form(...)):
+    filename = f"{uuid.uuid4()}.png"
+    file_path = f"{QR_DIR}/{filename}"
+
+    qr = qrcode.QRCode(
+        version=2,
+        error_correction=qrcode.constants.ERROR_CORRECT_M,
+        box_size=10,
+        border=4
+    )
+    qr.add_data(question)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="black", back_color="white")
+    img.save(file_path)
+
+    return templates.TemplateResponse("qr_genrator.html", {
+        "request": request,
+        "qr_path": f"/static/qr/{filename}"
+    })
+
+
+@app.get("/download/{filename}")
+def download_qr(filename: str):
+    return FileResponse(
+        path=f"{QR_DIR}/{filename}",
+        media_type="image/png",
+        filename="qr_code.png"
+    )

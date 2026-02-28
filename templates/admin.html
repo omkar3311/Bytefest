@@ -1,146 +1,182 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Panel</title>
-    <style>
-        body {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background: radial-gradient(circle at top, #020617, #0f172a);
-            color: #e5e7eb;
-            font-family: Inter, system-ui, -apple-system, sans-serif;
-            padding: 30px;
-        }
+<meta charset="UTF-8">
+<title>Admin Panel</title>
 
-        h2 {
-            margin-bottom: 20px;
-        }
-
-        .table-wrapper {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(12px);
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.04);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-        }
-
-        th, td {
-            padding: 14px;
-            text-align: center;
-            font-size: 0.95rem;
-            border-bottom: 1px solid #1e293b;
-            border-right: 1px solid #1e293b;
-        }
-
-        th:last-child,
-        td:last-child {
-            border-right: none;
-        }
-
-        th {
-            background: #020617;
-            color: #c7d2fe;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-size: 0.75rem;
-        }
-
-        tbody tr {
-            background: rgba(2, 6, 23, 0.65);
-            transition: background 0.25s ease, transform 0.2s ease;
-        }
-
-        tbody tr:nth-child(even) {
-            background: rgba(2, 6, 23, 0.85);
-        }
-
-        tbody tr:hover {
-            background: rgba(30, 41, 59, 0.9);
-            transform: scale(1.01);
-        }
-
-        td:first-child {
-            font-weight: 700;
-            color: #38bdf8;
-        }
-
-        tbody tr:nth-child(1) td:first-child {
-            color: #facc15;
-        }
-
-        tbody tr:nth-child(2) td:first-child {
-            color: #e5e7eb;
-        }
-
-        tbody tr:nth-child(3) td:first-child {
-            color: #f97316;
-        }
-        .footer {
-    margin-top: 20px;
-    padding: 15px 0;
-    text-align: center;
-    font-size: 13px;
+<style>
+:root{
+  --bg1:#020617;
+  --bg2:#0f172a;
+  --glass:rgba(15,23,42,0.85);
+  --border:rgba(148,163,184,0.15);
+  --text:#e5e7eb;
+  --muted:#94a3b8;
+  --accent:#38bdf8;
 }
 
-.footer a {
-    color: #b7c2d3ff;
-    text-decoration: none;
-    transition: color 0.2s ease;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 }
 
-.footer a:hover {
-    color: #2563eb;
-    text-decoration: underline;
+body{
+  min-height:100vh;
+  background:radial-gradient(circle at top,var(--bg1),var(--bg2));
+  font-family:Inter,system-ui,sans-serif;
+  color:var(--text);
+  padding:30px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
-    </style>
+
+h2{
+  margin-bottom:20px;
+  text-align:center;
+  letter-spacing:0.03em;
+}
+
+/* ---------- TABLE ---------- */
+
+.table-wrapper{
+  width:100%;
+  max-width:900px;
+  background:var(--glass);
+  backdrop-filter:blur(14px);
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid var(--border);
+  box-shadow:0 20px 40px rgba(0,0,0,0.45);
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+}
+
+th,td{
+  padding:14px;
+  text-align:center;
+  border-bottom:1px solid #1e293b;
+  border-right:1px solid #1e293b;
+  font-size:0.95rem;
+}
+
+th:last-child,
+td:last-child{
+  border-right:none;
+}
+
+th{
+  background:#020617;
+  color:#c7d2fe;
+  font-size:0.75rem;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+}
+
+tbody tr{
+  background:rgba(2,6,23,0.65);
+  transition:background 0.25s ease, transform 0.2s ease;
+}
+
+tbody tr:nth-child(even){
+  background:rgba(2,6,23,0.85);
+}
+
+tbody tr:hover{
+  background:rgba(30,41,59,0.9);
+  transform:scale(1.01);
+}
+
+td:first-child{
+  font-weight:700;
+  color:var(--accent);
+}
+
+/* ---------- RANK COLORS ---------- */
+tbody tr:nth-child(1) td:first-child{ color:#facc15; }
+tbody tr:nth-child(2) td:first-child{ color:#e5e7eb; }
+tbody tr:nth-child(3) td:first-child{ color:#f97316; }
+
+/* ---------- FOOTER ---------- */
+
+.footer{
+  margin-top:25px;
+  font-size:13px;
+  opacity:0.9;
+}
+
+.footer a{
+  color:#c7d2fe;
+  text-decoration:none;
+  padding:8px 16px;
+  border-radius:10px;
+  background:rgba(15,23,42,0.6);
+  border:1px solid var(--border);
+  transition:0.25s ease;
+  display:inline-block;
+}
+
+.footer a:hover{
+  color:var(--accent);
+  box-shadow:0 0 16px rgba(56,189,248,0.35);
+  transform:translateY(-2px);
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media(max-width:700px){
+  th,td{ font-size:0.85rem; padding:10px; }
+}
+</style>
 </head>
+
 <body>
 
 <h2>
-    🏆
-    {% if mode == "arrange" %}
-        Arrange Leaderboard
-    {% elif mode == "debug" %}
-        Debug Leaderboard
-    {% else %}
-        Leaderboard
-    {% endif %}
+🏆
+{% if mode == "arrange" %}
+  Arrange Leaderboard
+{% elif mode == "debug" %}
+  Debug Leaderboard
+{% else %}
+  Leaderboard
+{% endif %}
 </h2>
 
 <div class="table-wrapper">
-    <table>
-        <thead>
-            <tr>
-                <th>Rank</th>
-                <th>Name</th>
-                <th>Score</th>
-                <th>Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for p in participants %}
-            <tr>
-                <td>{{ p.rank }}</td>
-                <td>{{ p.name }}</td>
-                <td>{{ p.score }}</td>
-                <td>{{ p.time }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+  <table>
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Name</th>
+        <th>Score</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in participants %}
+      <tr>
+        <td>{{ p.rank }}</td>
+        <td>{{ p.name }}</td>
+        <td>{{ p.score }}</td>
+        <td>{{ p.time }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
+
 <footer class="footer">
-    <a href="https://github.com/omkar3311" target="_blank" rel="noopener noreferrer">
-        Devloped by Omkar Waghmare
-    </a>
+  <a href="https://github.com/omkar3311"
+     target="_blank"
+     rel="noopener noreferrer">
+    Developed by Omkar Waghmare
+  </a>
 </footer>
+
 </body>
 </html>
