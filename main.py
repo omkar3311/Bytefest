@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form
+from fastapi import FastAPI, Request, Form, UploadFile, File
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from supabase import create_client
 from dotenv import load_dotenv
 import os
-from utility import DEFAULT_CODES,DEBUG_CODES
+from utility import DEFAULT_CODES,DEBUG_CODES,QR_DB
 
 load_dotenv()
 SUPABASE_URL = os.getenv("supabase_url")
@@ -226,20 +226,33 @@ async def register_form(request: Request):
         }
     )
 
+UPLOAD_DIR = "uploaded_img"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
 @app.post("/register")
 async def register_user(
     fullname: str = Form(...),
     email: str = Form(...),
     contact: str = Form(...),
-    college: str = Form(...)
+    college: str = Form(...),
+    payment_img: UploadFile = File(...)
 ):
     email = email.strip().lower()
 
     if not email.endswith("@gmail.com"):
-        return {"success": False, "message": "Email must end with @gmail.com"}
+        return {"success": False, "message": "Email must be Gmail"}
 
     if not contact.isdigit() or len(contact) != 10:
-        return {"success": False, "message": "Contact must be exactly 10 digits"}
+        return {"success": False, "message": "Invalid contact number"}
+
+    ext = payment_img.filename.split(".")[-1]
+    filename = f"{fullname.replace(' ','_')}.{ext}"
+    path = os.path.join(UPLOAD_DIR, filename)
+
+    with open(path,"wb") as f:
+        f.write(await payment_img.read())
+
+    return {"success": True}
 
     # if user_exists(contact):
     #     return {"success": False, "message": "User already registered"}
@@ -251,4 +264,50 @@ async def register_user(
     #     "college_name": college
     # }).execute()
 
-    return {"success": True}
+
+
+# ---------------------------------------------------------------------------------------
+
+class QRScanRequest(BaseModel):
+    qr_data: str
+    full_name: str
+
+class ResultRequest(BaseModel):
+    full_name: str
+    result: str
+
+class NameRequest(BaseModel): 
+    full_name: str
+
+@app.get("/qr-hunt", response_class=HTMLResponse)
+def serve_page(request: Request):
+    return templates.TemplateResponse(
+        "qr_hunt.html",
+        {"request": request}
+    )
+
+@app.post("/validate-user")
+def validate_user(data: NameRequest):
+    name = data.full_name.strip()
+    res = (
+        supabase
+        .table("participants")
+        .select("id")
+        .ilike("name", name)
+        .execute()
+    )
+    print(res.data)
+    if res.data:
+        return {"status": "ok"}
+    return {"status": "not_found"}
+
+@app.post("/get-answer")
+def get_answer(data: QRScanRequest):
+    return {"answer": QR_DB.get(data.qr_data, "")}
+
+@app.post("/submit-result")
+def submit_result(data: ResultRequest):
+    # supabase.table("participants").update({
+    #     "round1": data.result
+    # }).eq("full_name", data.full_name).execute()
+    return {"status": "saved"}
