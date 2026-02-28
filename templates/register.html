@@ -232,7 +232,9 @@ button:hover{
       </a>
     </div>
   </div>
+  <br>
   <p class="error" id="error" style="display:none;"></p>
+  <br>
   <div class="submit-wrap" id="submit-wrap">
   <button type="submit" form="form">Register</button>
   </div>
@@ -270,8 +272,10 @@ form.addEventListener("submit", async e => {
   }
 
   form.style.display = "none"
+  document.getElementById("qr-section").style.display = "none"
   document.getElementById("submit-wrap").style.display = "none"
   statusText.innerText = "Registration received. Payment verification pending ⏳"
+  document.getElementById("success").style.display = "block"
 })
 </script>
 </body>

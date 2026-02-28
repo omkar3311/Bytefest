@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Approve Registrations</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg-dark-1:#000814;
+  --bg-dark-2:#001d3d;
+  --bg-dark-3:#000428;
+  --neon:#00f5ff;
+  --neon-soft:rgba(0,245,255,0.3);
+  --glass-bg:rgba(255,255,255,0.05);
+  --glass-border:rgba(255,255,255,0.1);
+  --text-main:#ffffff;
+  --text-muted:#cfd8dc;
+  --radius-lg:20px;
+  --radius-md:15px;
+  --blur:10px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  font-family:'Poppins',sans-serif;
+  min-height:100vh;
+  background:linear-gradient(135deg,var(--bg-dark-3),var(--bg-dark-2),var(--bg-dark-1));
+  display:flex;
+  justify-content:center;
+  color:var(--text-main);
+}
+
+.container{
+  width:100%;
+  max-width:900px;
+  padding:20px;
+}
+
+.header{
+  text-align:center;
+  margin-bottom:25px;
+}
+
+.header h1{
+  font-family:'Orbitron',sans-serif;
+  margin-bottom:6px;
+}
+
+.header p{
+  color:var(--text-muted);
+  font-size:14px;
+}
+
+.list{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.card{
+  background:var(--glass-bg);
+  border:1px solid var(--glass-border);
+  border-radius:var(--radius-lg);
+  padding:18px;
+  backdrop-filter:blur(var(--blur));
+  box-shadow:0 0 20px var(--neon-soft);
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  font-size:14px;
+  margin-bottom:6px;
+}
+
+.label{
+  color:var(--text-muted);
+}
+
+.status-approved{color:#00ff9c;font-weight:600;}
+.status-pending{color:#ffd166;font-weight:600;}
+
+.actions{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+}
+
+button{
+  flex:1;
+  padding:10px;
+  border-radius:12px;
+  border:none;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.approve-btn{
+  background:linear-gradient(90deg,#00f5ff,#00bcd4);
+}
+
+.decline-btn{
+  background:linear-gradient(90deg,#ff5252,#ff1744);
+  color:#fff;
+}
+
+button:hover{
+  transform:scale(1.04);
+  box-shadow:0 0 18px var(--neon-soft);
+}
+
+@media(min-width:768px){
+  .list{gap:0;}
+  .card{display:none;}
+
+  table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0 12px;
+  }
+
+  th{
+    text-align:left;
+    color:var(--text-muted);
+    font-size:13px;
+  }
+
+  td{
+    background:var(--glass-bg);
+    padding:14px;
+    border-top:1px solid var(--glass-border);
+    border-bottom:1px solid var(--glass-border);
+  }
+
+  tr td:first-child{
+    border-left:1px solid var(--glass-border);
+    border-radius:15px 0 0 15px;
+  }
+
+  tr td:last-child{
+    border-right:1px solid var(--glass-border);
+    border-radius:0 15px 15px 0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>Approve Registrations</h1>
+    <p>Verify payment and approve participants</p>
+  </div>
+
+  <div class="list">
+    {% for u in users %}
+    <div class="card">
+      <div class="row"><span class="label">Name</span><span>{{ u.name }}</span></div>
+      <div class="row"><span class="label">Gmail</span><span>{{ u.gmail }}</span></div>
+      <div class="row"><span class="label">UTR</span><span>{{ u.fee }}</span></div>
+      <div class="row">
+        <span class="label">Status</span>
+        {% if u.auth %}
+          <span class="status-approved">Approved</span>
+        {% else %}
+          <span class="status-pending">Pending</span>
+        {% endif %}
+      </div>
+
+      {% if not u.auth %}
+      <div class="actions">
+        <form action="/approve-user" method="post">
+          <input type="hidden" name="user_id" value="{{ u.id }}">
+          <button class="approve-btn">Approve</button>
+        </form>
+        <form action="/decline-user" method="post">
+          <input type="hidden" name="user_id" value="{{ u.id }}">
+          <button class="decline-btn">Decline</button>
+        </form>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Gmail</th>
+        <th>Transaction</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{ u.name }}</td>
+        <td>{{ u.gmail }}</td>
+        <td>{{ u.fee }}</td>
+        <td>
+          {% if u.auth %}
+            <span class="status-approved">Approved</span>
+          {% else %}
+            <span class="status-pending">Pending</span>
+          {% endif %}
+        </td>
+        <td>
+  {% if not u.auth %}
+  <form action="/approve" method="post" style="display:inline;">
+    <input type="hidden" name="user_id" value="{{ u.id }}">
+    <button class="approve-btn" name="action" value="approve">Approve</button>
+    <button class="decline-btn" name="action" value="decline">Decline</button>
+  </form>
+  {% else %}
+  —
+  {% endif %}
+</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+</body>
+</html>
