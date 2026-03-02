@@ -339,7 +339,9 @@ submitBtn.onclick = async () => {
 
         statusEl.innerHTML = `
             <b>PASS</b><br>
-            Next Destination: <b>${nextDestination}</b>
+            ${isLastRound 
+                ? "<b>GAME END</b>" 
+                : `Next Destination: <b>${nextDestination}</b>`}
         `;
 
         if (!isLastRound) {
