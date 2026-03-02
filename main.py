@@ -27,6 +27,7 @@ class LoadRequest(BaseModel):
     secret_code: str
 
 class SubmitRequest(BaseModel):
+    gmail : str
     secret_code: str
     user_code: str
     time_taken: int
@@ -99,6 +100,7 @@ def normalize(code: str):
 @app.post("/submit-code")
 def submit_code(data: SubmitRequest):
     code = data.secret_code
+    gmail = data.gmail
 
     if code.startswith("B-"):
         correct = DEFAULT_CODES[code].strip().splitlines()
@@ -106,9 +108,11 @@ def submit_code(data: SubmitRequest):
         score = sum(1 for i in range(min(len(correct), len(user))) if correct[i].strip() == user[i].strip())
 
         supabase.table("participant").update({
+            "mode": "arrange",
+            "code" : code,
             "B-score": score,
             "B-time": data.time_taken
-        }).eq("code", code).execute()
+        }).eq("gmail", gmail).execute()
 
         return {"success": True, "score": score, "total": len(correct)}
 
@@ -124,9 +128,11 @@ def submit_code(data: SubmitRequest):
         score = max(score, 0)
 
         supabase.table("participant").update({
+            "mode": "debug",
+            "code" : code,
             "D-score": score,
             "D-time": data.time_taken
-        }).eq("code", code).execute()
+        }).eq("gmail", gmail).execute()
 
         return {"success": True, "score": score, "total": DEBUG_CODES[code]["bugs"]}
 
