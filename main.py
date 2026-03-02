@@ -240,9 +240,15 @@ def qr_page(request: Request):
 
 @app.post("/validate-user")
 def validate_user(data: NameRequest):
-    print("qr")
-    res = supabase.table("participant").select("id").ilike("name", f"%{data.full_name}%").execute()
-    return {"status": "ok"} if res.data else {"status": "not_found"}
+    res = supabase.table("participant").select("auth").eq("gmail", data.full_name.lower()).execute()
+    print(res)
+    if not res.data:
+        return {"status": "not_found"}
+
+    if res.data[0]["auth"] is True:
+        return {"status": "ok"}
+
+    return {"status": "pending"}
 
 @app.post("/get-answer")
 def get_answer(data: QRScanRequest):
