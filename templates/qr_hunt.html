@@ -332,13 +332,16 @@ submitBtn.onclick = async () => {
 
     const userAnswer = answerInput.value.trim().toLowerCase();
     if (!userAnswer) return;
-
+    if(userAnswer != correctAnswer) {
+      statusEl.innerHTML = `
+            <p style="color: red; font-weight: bold;">Wrong answer</p>`
+    }
     if (userAnswer === correctAnswer) {
         resultSubmitted = true;
         submitBtn.disabled = true;
 
         statusEl.innerHTML = `
-            <b>PASS</b><br>
+            <b style="color: green;">PASS</b><br>
             ${isLastRound 
                 ? "<b>GAME END</b>" 
                 : `Next Destination: <b>${nextDestination}</b>`}

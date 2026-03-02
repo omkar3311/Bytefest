@@ -39,6 +39,7 @@ DEFAULT_CODES = {
 
 "B-020": "#include <stdio.h>\nint main(){\nint a,b;\nscanf(\"%d %d\",&a,&b);\nint r;\nr=a-b;\na=r;\nprintf(\"%d\",a);\nreturn 0;\n}"
 }
+print(DEFAULT_CODES["B-001"].splitlines())
 
 DEBUG_CODES = {
 

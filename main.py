@@ -62,12 +62,13 @@ def load_code(data: LoadRequest):
     if code.startswith("B-") and code in DEFAULT_CODES:
         res = supabase.table("participant").select("auth").eq("gmail", data.name.lower()).execute()
         if not res.data:
-            return {"status": "not_found"}
+            return {"success": False, "message": " User not found"}
 
         if res.data[0]["auth"] is False:
-            return {"success": False, "message": "Not Approved"}
+            return {"success": False, "message": "User Not Approved"}
 
-        elements = DEFAULT_CODES[code].replace("\n", " \n ").split()
+        # elements = DEFAULT_CODES[code].replace("\n", " \n ").split()
+        elements = DEFAULT_CODES[code].splitlines()
         return {
             "success": True,
             "mode": "arrange",
@@ -94,7 +95,16 @@ def load_code(data: LoadRequest):
         }
 
     return {"success": False, "message": "Invalid secret code"}
-
+def normalize_lines(code: str):
+    normalized = []
+    for line in code.splitlines():
+        if not line.strip():
+            continue
+        line = line.replace(",", " , ").replace(";", " ; ")
+        line = " ".join(line.split())
+        line = line.replace(" ,", ",").replace(" ;", ";")
+        normalized.append(line)
+    return normalized
 def normalize(code: str):
     return [" ".join(l.split()) for l in code.splitlines() if l.strip()]
 
@@ -104,18 +114,44 @@ def submit_code(data: SubmitRequest):
     gmail = data.gmail
 
     if code.startswith("B-"):
-        correct = DEFAULT_CODES[code].strip().splitlines()
-        user = data.user_code.strip().splitlines()
-        score = sum(1 for i in range(min(len(correct), len(user))) if correct[i].strip() == user[i].strip())
+        correct_raw = DEFAULT_CODES[code]
+        user_raw = data.user_code
+
+        correct = normalize_lines(correct_raw)
+        user = normalize_lines(user_raw)
+
+        score = 0
+        results = []
+
+        for i in range(len(correct)):
+            user_line = user[i] if i < len(user) else ""
+            correct_line = correct[i]
+
+            is_correct = user_line == correct_line
+            if is_correct:
+                score += 1
+
+            results.append({
+                "line_no": i + 1,
+                "correct": correct_line,
+                "user": user_line,
+                "is_correct": is_correct
+            })
 
         supabase.table("participant").update({
             "mode": "arrange",
-            "code" : code,
+            "code": code,
             "B-score": score,
             "B-time": data.time_taken
         }).eq("gmail", gmail).execute()
 
-        return {"success": True, "score": score, "total": len(correct)}
+        return {
+            "success": True,
+            "score": score,
+            "total": len(correct),
+            "correct_code": correct,
+            "lines": results
+        }
 
     if code.startswith("D-"):
         correct = normalize(DEBUG_CODES[code]["correct_code"])
