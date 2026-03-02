@@ -33,7 +33,6 @@ body{
   flex-direction:column;
   align-items:center;
   color:var(--text-main);
-  overflow-x:hidden;
 }
 
 .container{
@@ -41,17 +40,11 @@ body{
   width:100%;
   max-width:720px;
   padding:40px;
-  border-radius:var(--radius-lg);
+  border-radius:20px;
   background:var(--glass-bg);
-  backdrop-filter:blur(var(--blur));
+  backdrop-filter:blur(10px);
   border:1px solid var(--glass-border);
   box-shadow:0 0 30px var(--neon-soft);
-  animation:fadeIn 1s ease forwards;
-}
-
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(25px);}
-  to{opacity:1;transform:translateY(0);}
 }
 
 h1{
@@ -66,51 +59,35 @@ h1{
   margin-bottom:30px;
 }
 
-.reg-layout{
+/* FORM LAYOUT */
+.reg-form{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:25px;
 }
 
-form{
+.form-section{
   display:flex;
   flex-direction:column;
   gap:14px;
 }
 
+.inputs{ grid-column:1; }
+.qr{ grid-column:2; align-items:center; }
+.submit{ grid-column:1 / -1; }
+
 input{
   padding:14px;
-  border-radius:var(--radius-md);
+  border-radius:15px;
   background:rgba(255,255,255,0.08);
   border:1px solid var(--glass-border);
-  color:var(--text-main);
+  color:#fff;
   outline:none;
 }
 
 input:focus{
   border-color:var(--neon);
   box-shadow:0 0 12px var(--neon-soft);
-}
-
-button{
-  padding:14px;
-  border-radius:var(--radius-md);
-  border:none;
-  font-weight:600;
-  background:linear-gradient(90deg,var(--neon),#00bcd4);
-  cursor:pointer;
-}
-
-button:hover{
-  transform:scale(1.05);
-  box-shadow:0 0 25px var(--neon);
-}
-
-.reg-right{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:15px;
 }
 
 .qr-img{
@@ -122,7 +99,7 @@ button:hover{
 .upload-label{
   width:100%;
   padding:12px;
-  border-radius:var(--radius-md);
+  border-radius:15px;
   border:1px dashed var(--glass-border);
   text-align:center;
   cursor:pointer;
@@ -130,61 +107,6 @@ button:hover{
 
 .upload-label input{display:none;}
 
-.success{
-  text-align:center;
-  margin-top:20px;
-  font-size:18px;
-  color:var(--neon);
-}
-
-.error{
-  color:#ff5252;
-  font-size:14px;
-  text-align:center;
-}
-
-.footer{
-  margin-top:30px;
-  text-align:center;
-  font-size:13px;
-}
-
-.footer a{
-  color:#b7c2d3;
-  text-decoration:none;
-}
-
-.footer a:hover{color:var(--neon);}
-
-@media(max-width:768px){
-  .container{padding:25px;}
-  .reg-layout{grid-template-columns:1fr;}
-  .qr-img{width:160px;}
-}
-.submit-wrap{
-  display:flex;
-  justify-content:center;
-}
-
-@media(max-width:768px){
-  .reg-layout{
-    display:flex;
-    flex-direction:column;
-  }
-
-  .submit-wrap{
-    order:3;
-    margin-top:20px;
-  }
-
-  .reg-right{
-    order:2;
-  }
-
-  form{
-    order:1;
-  }
-}
 .upi-pay-btn{
   width:100%;
   padding:12px;
@@ -197,10 +119,64 @@ button:hover{
   box-shadow:0 0 20px rgba(0,245,255,0.4);
 }
 
-.upi-pay-btn:hover{
-  transform:scale(1.05);
-  box-shadow:0 0 30px rgba(0,245,255,0.7);
+button{
+  padding:14px;
+  border-radius:15px;
+  border:none;
+  font-weight:600;
+  background:linear-gradient(90deg,var(--neon),#00bcd4);
+  cursor:pointer;
 }
+
+button:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 25px var(--neon);
+}
+
+.submit-wrap{
+  display:flex;
+  justify-content:center;
+}
+
+.error{
+  color:#ff5252;
+  font-size:14px;
+  text-align:center;
+}
+
+.success{
+  text-align:center;
+  font-size:18px;
+  color:var(--neon);
+}
+
+/* MOBILE ORDER */
+@media(max-width:768px){
+  .container{padding:25px;}
+
+  .reg-form{
+    display:flex;
+    flex-direction:column;
+  }
+
+  .inputs{ order:1; }
+  .qr{ order:2; }
+  .submit{ order:3; }
+
+  .qr-img{width:160px;}
+}
+
+.footer{
+  margin-top:30px;
+  text-align:center;
+  font-size:13px;
+}
+
+.footer a{
+  color:#b7c2d3;
+  text-decoration:none;
+}
+.footer a:hover{color:var(--neon);}
 </style>
 </head>
 
@@ -210,37 +186,40 @@ button:hover{
   <h1>BYTEFEST 2026</h1>
   <p id="status-text">Register Now & Be Part of Innovation 🚀</p>
 
-  <div class="reg-layout">
-    <form id="form">
-  <input name="fullname" placeholder="Full Name" required>
-  <input type="email" name="email" placeholder="Gmail only" required>
-  <input name="contact" placeholder="Contact Number" maxlength="10" required>
-  <input name="college" placeholder="College Name" required>
+  <form id="form" class="reg-form" enctype="multipart/form-data">
 
-  <input 
-    name="utr"
-    placeholder="UPI Transaction ID (UTR)"
-    required
-  >
-</form>
-    <div class="reg-right" id="qr-section">
-      <img src="/static/reg-qr.jpeg" class="qr-img">
-      <a 
-        href="upi://pay?pa=sakshisutar612@oksbi&pn=ByteFest&am=50&cu=INR&tn=Registration%20fee"
-        class="upi-pay-btn">
-        Pay ₹50 via UPI
-      </a>
+    <div class="form-section inputs">
+      <input name="fullname" placeholder="Full Name" required>
+      <input type="email" name="email" placeholder="Gmail only" required>
+      <input name="contact" placeholder="Contact Number" maxlength="10" required>
+      <input name="college" placeholder="College Name" required>
     </div>
-  </div>
-  <br>
-  <p class="error" id="error" style="display:none;"></p>
-  <br>
-  <div class="submit-wrap" id="submit-wrap">
-  <button type="submit" form="form">Register</button>
-  </div>
-    <p class="success" id="success" style="display:none;">
-    Registration Successful 🎉
-  </p>
+
+    <div class="form-section qr" id="qr-section">
+      <img src="/static/reg-qr.jpeg" class="qr-img">
+
+      <a href="upi://pay?pa=sakshisutar612@oksbi&pn=ByteFest&am=50&cu=INR"
+         class="upi-pay-btn">Pay ₹50 via UPI</a>
+
+      <label class="upload-label">
+        Upload Payment Screenshot
+        <input type="file" name="payment_proof" accept="image/*" required>
+      </label>
+    </div>
+
+    <div class="form-section submit">
+      <p class="error" id="error" style="display:none;"></p>
+
+      <div class="submit-wrap" id="submit-wrap">
+        <button type="submit">Register</button>
+      </div>
+
+      <p class="success" id="success" style="display:none;">
+        Registration Successful 🎉
+      </p>
+    </div>
+
+  </form>
 </div>
 
 <footer class="footer">
@@ -252,31 +231,45 @@ const form = document.getElementById("form")
 const errorEl = document.getElementById("error")
 const statusText = document.getElementById("status-text")
 
-form.addEventListener("submit", async e => {
+form.addEventListener("submit", async (e) => {
   e.preventDefault()
   errorEl.style.display = "none"
+  errorEl.innerText = ""
 
-  const data = new FormData(form)
+  const fileInput = form.querySelector('input[name="payment_proof"]')
 
-  const res = await fetch("/register", {
-    method: "POST",
-    body: data
-  })
-
-  const json = await res.json()
-
-  if (!json.success) {
-    errorEl.innerText = json.message
+  if (!fileInput.files || fileInput.files.length === 0) {
+    errorEl.innerText = "Please upload the payment screenshot before registering."
     errorEl.style.display = "block"
     return
   }
 
-  form.style.display = "none"
-  document.getElementById("qr-section").style.display = "none"
-  document.getElementById("submit-wrap").style.display = "none"
-  statusText.innerText = "Registration received. Payment verification pending ⏳"
-  document.getElementById("success").style.display = "block"
+  const data = new FormData(form)
+
+  try {
+    const res = await fetch("/register", {
+      method: "POST",
+      body: data
+    })
+
+    const json = await res.json()
+
+    if (!json.success) {
+      errorEl.innerText = json.message || "Registration failed. Try again."
+      errorEl.style.display = "block"
+      return
+    }
+
+    form.style.display = "none"
+    statusText.innerText = "Registration received. Payment verification pending ⏳"
+    document.getElementById("success").style.display = "block"
+
+  } catch (err) {
+    errorEl.innerText = "Network error. Please try again."
+    errorEl.style.display = "block"
+  }
 })
 </script>
+
 </body>
 </html>

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, Query
+from fastapi import FastAPI, Request, Form, Query, UploadFile, File
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse,RedirectResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -7,6 +7,7 @@ from supabase import create_client
 from dotenv import load_dotenv
 import os
 import qrcode
+import re
 import uuid
 from utility import DEFAULT_CODES, DEBUG_CODES, QR_DB
 
@@ -197,18 +198,37 @@ def admin_panel(request: Request, mode: str | None = Query(default=None)):
 def register_form(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
 
+BUCKET = "filestore"
+
 @app.post("/register")
-def register_user(
+async def register_user(
     fullname: str = Form(...),
     email: str = Form(...),
     contact: str = Form(...),
-    utr: str = Form(...)
+    college: str = Form(...),
+    payment_proof: UploadFile = File(...)
 ):
+    if payment_proof.content_type not in ["image/jpeg", "image/png", "image/jpg"]:
+        return {"success": False, "message": "Invalid file type"}
+
+    username = re.sub(r"[^a-zA-Z0-9]", "_", fullname.strip().lower())
+    ext = payment_proof.filename.split(".")[-1]
+    filename = f"{username}.{ext}"
+    path = f"register/{filename}"
+
+    supabase.storage.from_(BUCKET).upload(
+        path,
+        await payment_proof.read(),
+        {"content-type": payment_proof.content_type}
+    )
+
+    file_url = supabase.storage.from_(BUCKET).get_public_url(path)
+
     supabase.table("participant").insert({
         "name": fullname.strip(),
         "gmail": email.strip().lower(),
         "contact": contact.strip(),
-        "fee": utr.strip(),
+        "fee": file_url,
         "auth": False
     }).execute()
 
