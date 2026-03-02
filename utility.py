@@ -603,3 +603,38 @@ QR_DB = {
     "Which language runs in browser?": "javascript",
     "What field does ML belong to?": "datascience"
 }
+
+QR_GAME = {
+    "round_1": {
+        "destination": "TOP",
+        "questions": [
+            {"q": "2 + 3 =", "a": "5"},
+            {"q": "10 - 6 =", "a": "4"},
+            {"q": "4 * 2 =", "a": "8"},
+            {"q": "16 / 4 =", "a": "4"},
+            {"q": "5 + 5 =", "a": "10"}
+        ]
+    },
+
+    "round_2": {
+        "destination": "GROUND",
+        "questions": [
+            {"q": "20 - 10 =", "a": "10"},
+            {"q": "6 * 3 =", "a": "18"},
+            {"q": "15 / 3 =", "a": "5"},
+            {"q": "9 + 11 =", "a": "20"},
+            {"q": "25 - 5 =", "a": "20"}
+        ]
+    },
+
+    "round_3": {
+        "destination": "LAB",
+        "questions": [
+            {"q": "3 + 7 =", "a": "10"},
+            {"q": "8 * 2 =", "a": "16"},
+            {"q": "18 / 6 =", "a": "3"},
+            {"q": "14 - 4 =", "a": "10"},
+            {"q": "5 * 3 =", "a": "15"}
+        ]
+    }
+}

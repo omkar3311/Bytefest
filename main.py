@@ -8,8 +8,9 @@ from dotenv import load_dotenv
 import os
 import qrcode
 import re
+import random
 import uuid
-from utility import DEFAULT_CODES, DEBUG_CODES, QR_DB
+from utility import DEFAULT_CODES, DEBUG_CODES, QR_DB ,QR_GAME
 
 load_dotenv()
 
@@ -260,7 +261,20 @@ def validate_user(data: NameRequest):
 
 @app.post("/get-answer")
 def get_answer(data: QRScanRequest):
-    return {"answer": QR_DB.get(data.qr_data, "")}
+    round_key = data.qr_data
+
+    if round_key not in QR_GAME:
+        return {"error": "invalid_qr"}
+
+    round_data = QR_GAME[round_key]
+    question = random.choice(round_data["questions"])
+
+    return {
+        "question": question["q"],
+        "answer": question["a"],
+        "destination": round_data["destination"],
+        "is_last_round": round_key == "round_3"
+    }
 
 @app.post("/submit-result")
 def submit_result(data: ResultRequest):

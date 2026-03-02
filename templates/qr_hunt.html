@@ -222,6 +222,8 @@ let attempts = 3;
 let playerName = "";
 let qrScanner = null;
 let resultSubmitted = false;
+let nextDestination = "";
+let isLastRound = false;
 
 const questionEl = document.getElementById("question");
 const triesEl = document.getElementById("tries");
@@ -235,6 +237,7 @@ const startBtn = document.getElementById("startBtn");
 const readerEl = document.getElementById("reader");
 
 triesEl.innerText = "Attempts left: 3";
+
 
 startBtn.onclick = async () => {
     const name = nameInput.value.trim();
@@ -250,10 +253,12 @@ startBtn.onclick = async () => {
     });
 
     const validateData = await validateRes.json();
-    if(validateData.status == "pending") {
-        statusEl.innerText = "You are not approved"
-        return
+
+    if (validateData.status === "pending") {
+        statusEl.innerText = "You are not approved";
+        return;
     }
+
     if (validateData.status !== "ok") {
         statusEl.innerText = "User not found";
         return;
@@ -264,6 +269,13 @@ startBtn.onclick = async () => {
 
     nameSection.style.display = "none";
     readerEl.style.display = "block";
+
+    startScanner();
+};
+
+
+async function startScanner() {
+    resetRoundState();
 
     qrScanner = new Html5Qrcode("reader");
 
@@ -284,26 +296,36 @@ startBtn.onclick = async () => {
                 });
 
                 const data = await res.json();
-
+                statusEl.innerText = data.answer;
                 if (!data.answer) {
                     statusEl.innerText = "Wrong QR";
                     return;
                 }
 
                 correctAnswer = data.answer.toLowerCase();
-                questionEl.innerText = qrText;
+                nextDestination = data.destination;
+                isLastRound = data.is_last_round;
 
+                questionEl.innerText = data.question;
                 questionEl.style.display = "block";
+
+                answerInput.value = "";
                 answerInput.style.display = "block";
+
+                submitBtn.disabled = false;
                 submitBtn.style.display = "block";
+
+                triesEl.innerText = "Attempts left: 3";
                 triesEl.style.display = "block";
+
                 statusEl.innerText = "";
             }
         );
     } catch {
         statusEl.innerText = "Camera unavailable";
     }
-};
+}
+
 
 submitBtn.onclick = async () => {
     if (resultSubmitted) return;
@@ -314,7 +336,25 @@ submitBtn.onclick = async () => {
     if (userAnswer === correctAnswer) {
         resultSubmitted = true;
         submitBtn.disabled = true;
-        statusEl.innerText = "PASS";
+
+        statusEl.innerHTML = `
+            <b>PASS</b><br>
+            Next Destination: <b>${nextDestination}</b>
+        `;
+
+        if (!isLastRound) {
+            const nextBtn = document.createElement("button");
+            nextBtn.innerText = "Scan Next QR";
+            nextBtn.style.marginTop = "10px";
+
+            nextBtn.onclick = () => {
+                readerEl.style.display = "block";
+                startScanner();
+            };
+
+            statusEl.appendChild(document.createElement("br"));
+            statusEl.appendChild(nextBtn);
+        }
 
         await fetch("/submit-result", {
             method: "POST",
@@ -334,6 +374,7 @@ submitBtn.onclick = async () => {
     if (attempts === 0) {
         resultSubmitted = true;
         submitBtn.disabled = true;
+
         statusEl.innerText = "FAIL";
 
         await fetch("/submit-result", {
@@ -346,6 +387,21 @@ submitBtn.onclick = async () => {
         });
     }
 };
+
+
+function resetRoundState() {
+    correctAnswer = "";
+    attempts = 3;
+    resultSubmitted = false;
+    nextDestination = "";
+    isLastRound = false;
+
+    questionEl.style.display = "none";
+    answerInput.style.display = "none";
+    submitBtn.style.display = "none";
+    triesEl.style.display = "none";
+    statusEl.innerText = "Scan your QR";
+}
 </script>
 
 </body>
