@@ -202,7 +202,9 @@ button:hover{
       <tr>
         <td>{{ u.name }}</td>
         <td>{{ u.gmail }}</td>
-        <td>{{ u.fee }}</td>
+        <td><a href="{{ u.fee }}" target="_blank" class="payment-link">
+          View Screenshot
+        </a> </td>
         <td>
           {% if u.auth %}
             <span class="status-approved">Approved</span>
