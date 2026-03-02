@@ -249,15 +249,20 @@ def qr_page(request: Request):
 
 @app.post("/validate-user")
 def validate_user(data: NameRequest):
-    res = supabase.table("participant").select("auth").eq("gmail", data.full_name.lower()).execute()
-    print(res)
+    res = supabase.table("participant") \
+        .select("auth, round1") \
+        .eq("gmail", data.full_name.lower()) \
+        .execute()
+
     if not res.data:
         return {"status": "not_found"}
 
-    if res.data[0]["auth"] is True:
+    user = res.data[0]
+
+    if user["auth"] is True and user["round1"] is True:
         return {"status": "ok"}
 
-    return {"status": "pending"}
+    return {"status": "pending"} 
 
 @app.post("/get-answer")
 def get_answer(data: QRScanRequest):
@@ -278,7 +283,15 @@ def get_answer(data: QRScanRequest):
 
 @app.post("/submit-result")
 def submit_result(data: ResultRequest):
-    return {"status": "saved"}
+    if data.result == "fail":
+        supabase.table("participant") \
+            .update({"round1": False}) \
+            .eq("gmail", data.full_name.lower()) \
+            .execute()
+
+        return {"status": "failed"}
+
+    return {"status": "passed"}
 
 @app.get("/approve")
 def approve_get(request: Request):
