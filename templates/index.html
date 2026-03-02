@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Bytefest</title>
+    <title>Arrange/Debug | Bytefest</title>
     <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
     <style>
         #left-panel {
             height: 500px;}
@@ -30,6 +32,122 @@
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     font-size: 20px;
 }
+body{
+  background:linear-gradient(135deg,#000428,#001d3d,#000814);
+  color:#fff;
+  font-family:Poppins,system-ui,sans-serif;
+}
+
+#navbar{
+  height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#020617;
+  color:#38bdf8;
+  font-size:22px;
+  font-weight:700;
+  letter-spacing:1px;
+  border-bottom:1px solid #1e293b;
+}
+
+#main-container{
+  display:flex;
+  gap:20px;
+  padding:20px;
+}
+
+#left-panel,
+#right-panel{
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:18px;
+  box-shadow:0 0 30px rgba(0,245,255,0.2);
+}
+
+#left-panel{
+  flex:1;
+  position:relative;
+  overflow:hidden;
+}
+
+#right-panel{
+  flex:1;
+  padding:20px;
+}
+
+#timer{
+  font-size:18px;
+  color:#00f5ff;
+  margin-bottom:10px;
+}
+
+input,textarea{
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.15);
+  color:#fff;
+  border-radius:12px;
+  padding:10px;
+}
+
+textarea{
+  width:100%;
+  min-height:220px;
+}
+
+button{
+  background:linear-gradient(90deg,#00f5ff,#00bcd4);
+  border:none;
+  border-radius:14px;
+  padding:12px 18px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+button:hover{
+  box-shadow:0 0 25px #00f5ff;
+  transform:scale(1.05);
+}
+
+#code-scatter-area{
+  position:relative;
+  width:100%;
+  height:100%;
+}
+
+.orbit{
+  position:absolute;
+  border:1px dashed rgba(0,245,255,0.25);
+  border-radius:50%;
+  animation:spin linear infinite;
+}
+
+.planet{
+  position:absolute;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:#00f5ff;
+  box-shadow:0 0 12px #00f5ff;
+}
+
+.sun{
+  position:absolute;
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  background:#ffcc00;
+  box-shadow:0 0 25px #ffcc00;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+}
+
+@keyframes spin{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
     </style>
 </head>
 
@@ -50,7 +168,7 @@
         </div>
 
         <div style="display:flex; gap:8px;">
-            <input id = "name" placeholder = "Enter Name">
+            <input id = "name" placeholder = "Enter Gmail">
             <input id="secret-code-input" placeholder="Secret code" />
             <button id="load-code-button">Load Code</button>
         </div>
@@ -111,7 +229,34 @@ function generateStars(count = 80) {
     }
 }
 generateStars()
+function createSolarSystem(){
+    const area=document.getElementById("code-scatter-area")
+    area.innerHTML=""
+    const sun=document.createElement("div")
+    sun.className="sun"
+    area.appendChild(sun)
 
+    const orbits=[70,110,150,190]
+    orbits.forEach((r,i)=>{
+        const orbit=document.createElement("div")
+        orbit.className="orbit"
+        orbit.style.width=r*2+"px"
+        orbit.style.height=r*2+"px"
+        orbit.style.top="50%"
+        orbit.style.left="50%"
+        orbit.style.marginLeft=-r+"px"
+        orbit.style.marginTop=-r+"px"
+        orbit.style.animationDuration=12+i*6+"s"
+
+        const planet=document.createElement("div")
+        planet.className="planet"
+        planet.style.top="50%"
+        planet.style.left="100%"
+
+        orbit.appendChild(planet)
+        area.appendChild(orbit)
+    })
+}
 function lockEditor() {
     const textarea = document.getElementById("user-code-input")
     const submitBtn = document.getElementById("submit-button")
@@ -133,7 +278,7 @@ document.getElementById("load-code-button").onclick = async () => {
     const name = nameInput.value.trim()
     const secret = secretInput.value.trim()
     if (name === "") {
-        status.innerText = "Name cannot be empty"
+        status.innerText = "Gmail cannot be empty"
         return
     }
     if (secret === "") {
@@ -168,34 +313,35 @@ document.getElementById("load-code-button").onclick = async () => {
     const area = document.getElementById("code-scatter-area")
     area.innerHTML = ""
     if (GAME_MODE === "arrange") {
-        generateStars();
-        floatingElements = [];
+    generateStars()
+    createSolarSystem()
+    floatingElements=[]
+    const rect=area.getBoundingClientRect()
 
-        const rect = area.getBoundingClientRect();
-        data.code_elements.forEach(el => {
-            const d = document.createElement("div");
-            d.className = "code-element";
-            d.innerText = el;
+    data.code_elements.forEach(el=>{
+        const d=document.createElement("div")
+        d.className="code-element"
+        d.innerText=el
 
-            const x = Math.random() * (rect.width - 100);
-            const y = Math.random() * (rect.height - 40);
+        const x=Math.random()*(rect.width-120)
+        const y=Math.random()*(rect.height-40)
 
-            d.style.transform = `translate(${x}px, ${y}px)`;
-            area.appendChild(d);
+        d.style.transform=`translate(${x}px,${y}px)`
+        area.appendChild(d)
 
-            floatingElements.push({
-                el: d,
-                x, y,
-                dx: (Math.random() - 0.5) * 0.35,
-                dy: (Math.random() - 0.5) * 0.35
-            });
-        });
+        floatingElements.push({
+            el:d,
+            x,y,
+            dx:(Math.random()-0.5)*0.35,
+            dy:(Math.random()-0.5)*0.35
+        })
+    })
 
-        if (!animationRunning) {
-            animationRunning = true;
-            animate();
-        }
+    if(!animationRunning){
+        animationRunning=true
+        animate()
     }
+}
 
     if (GAME_MODE === "debug") {
         area.innerHTML = `

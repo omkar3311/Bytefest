@@ -58,11 +58,12 @@ def load_code(data: LoadRequest):
         return {"success": True, "redirect": "/admin?mode=debug"}
 
     if code.startswith("B-") and code in DEFAULT_CODES:
-        supabase.table("participant").insert({
-            "name": name,
-            "code": code,
-            "mode": "arrange"
-        }).execute()
+        res = supabase.table("participant").select("auth").eq("gmail", data.name.lower()).execute()
+        if not res.data:
+            return {"status": "not_found"}
+
+        if res.data[0]["auth"] is False:
+            return {"success": False, "message": "Not Approved"}
 
         elements = DEFAULT_CODES[code].replace("\n", " \n ").split()
         return {
@@ -74,11 +75,12 @@ def load_code(data: LoadRequest):
         }
 
     if code.startswith("D-") and code in DEBUG_CODES:
-        supabase.table("participant").insert({
-            "name": name,
-            "code": code,
-            "mode": "debug"
-        }).execute()
+        res = supabase.table("participant").select("auth").eq("gmail", data.name.lower()).execute()
+        if not res.data:
+            return {"status": "not_found"}
+
+        if res.data[0]["auth"] is False:
+            return {"success": False, "message": "Not Approved"}
 
         return {
             "success": True,
