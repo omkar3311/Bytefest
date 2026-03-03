@@ -157,13 +157,26 @@ def submit_code(data: SubmitRequest):
         correct = normalize(DEBUG_CODES[code]["correct_code"])
         user = normalize(data.user_code)
         score = DEBUG_CODES[code]["bugs"]
-
+        results = []
         for i in range(max(len(correct), len(user))):
             if (correct[i] if i < len(correct) else "") != (user[i] if i < len(user) else ""):
                 score -= 1
 
         score = max(score, 0)
+        for i in range(len(correct)):
+            user_line = user[i] if i < len(user) else ""
+            correct_line = correct[i]
 
+            is_correct = user_line == correct_line
+            if is_correct:
+                score += 1
+
+            results.append({
+                "line_no": i + 1,
+                "correct": correct_line,
+                "user": user_line,
+                "is_correct": is_correct
+            })
         supabase.table("participant").update({
             "mode": "debug",
             "code" : code,
@@ -171,7 +184,12 @@ def submit_code(data: SubmitRequest):
             "D-time": data.time_taken
         }).eq("gmail", gmail).execute()
 
-        return {"success": True, "score": score, "total": DEBUG_CODES[code]["bugs"]}
+        return {"success": True,
+                "score": score, 
+                "total": DEBUG_CODES[code]["bugs"],
+                "correct_code": correct,
+                "lines": results
+                }
 
 @app.get("/admin")
 def admin_panel(request: Request, mode: str | None = Query(default=None)):

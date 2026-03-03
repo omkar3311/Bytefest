@@ -435,9 +435,7 @@ async function submitCode(auto = false) {
     playEndAudio()
     document.getElementById("status-message").innerText =
         `Score: ${data.score}/${data.total}`
-    if (GAME_MODE === "arrange") {
     showFinalCode(data.lines)
-}
 }
 function showFinalCode(lines) {
     const area = document.getElementById("code-scatter-area")
