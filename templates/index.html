@@ -257,7 +257,6 @@ button:hover{
   overflow:hidden; /* important */
   z-index:1;
 }
-./* OUTSIDE BORDER FLAME */
 .flame-border{
   position:absolute;
   top:-15px;
@@ -462,7 +461,10 @@ document.getElementById("load-code-button").onclick = async () => {
     if (GAME_MODE === "arrange") {
     // generateStars()
     // createSolarSystem()
-    createSharingan()
+    // createSharingan()
+    const effects = [createSolarSystem, createSharingan]
+    const randomEffect = effects[Math.floor(Math.random() * effects.length)]
+    randomEffect()
     floatingElements=[]
     const rect=area.getBoundingClientRect()
 
