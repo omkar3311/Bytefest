@@ -607,7 +607,7 @@ QR_DB = {
 
 QR_GAME = {
     "round_1": {
-        "destination": "TOP",
+        "destination": "Every scholar meets me before becoming one-----entrance Interviews and opportunities begin from here",
         "questions": [
             {"q": "2 + 3 =", "a": "5"},
             {"q": "10 - 6 =", "a": "4"},
@@ -618,7 +618,7 @@ QR_GAME = {
     },
 
     "round_2": {
-        "destination": "GROUND",
+        "destination": "Where gravity is challenged by laughter and time is measured in turns, not minutes.",
         "questions": [
             {"q": "20 - 10 =", "a": "10"},
             {"q": "6 * 3 =", "a": "18"},

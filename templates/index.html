@@ -148,6 +148,152 @@ button:hover{
   from{transform:rotate(0deg)}
   to{transform:rotate(360deg)}
 }
+
+
+.sharingan-container{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:220px;
+  height:220px;
+}
+
+.sharingan-eye{
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  background:radial-gradient(circle at center,#7a0000 40%,#300000 70%);
+  border:6px solid #000;
+  box-shadow:0 0 40px red, inset 0 0 30px black;
+  position:relative;
+  animation:spinEye 6s linear infinite;
+}
+
+.sharingan-center{
+  position:absolute;
+  width:40px;
+  height:40px;
+  background:black;
+  border-radius:50%;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+}
+
+.tomoe{
+  position:absolute;
+  width:28px;
+  height:28px;
+  background:black;
+  border-radius:50%;
+}
+
+.tomoe:nth-child(1){
+  top:15%;
+  left:50%;
+  transform:translate(-50%,0);
+}
+
+.tomoe:nth-child(2){
+  bottom:20%;
+  left:20%;
+}
+
+.tomoe:nth-child(3){
+  bottom:20%;
+  right:20%;
+}
+
+@keyframes spinEye{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+
+
+.blood{
+  position:absolute;
+  top:60%;
+  left:50%;
+  width:5px;
+  height:0;
+  background:linear-gradient(to bottom, #8b0000, #300000);
+  transform:translateX(-50%);
+  border-radius:3px;
+  animation:bleed 2.5s ease forwards;
+}
+
+@keyframes bleed{
+  0%{height:0}
+  100%{height:100px}
+}
+
+.amaterasu{
+  position:absolute;
+  width:80px;
+  height:100%;
+  background:radial-gradient(circle, black 30%, transparent 70%);
+  filter:blur(12px);
+  opacity:0.8;
+  animation:flameMove 3s ease-in-out infinite alternate;
+}
+
+.amaterasu.left{
+  left:0;
+}
+
+.amaterasu.right{
+  right:0;
+}
+
+@keyframes flameMove{
+  from{transform:scaleY(1)}
+  to{transform:scaleY(1.2)}
+}
+
+#left-panel{
+  flex:1;
+  position:relative;
+  overflow:hidden; /* important */
+  z-index:1;
+}
+./* OUTSIDE BORDER FLAME */
+.flame-border{
+  position:absolute;
+  top:-15px;
+  left:-15px;
+  width:calc(100% + 30px);
+  height:calc(100% + 30px);
+  border-radius:30px;
+  pointer-events:none;
+  z-index:0;
+}
+
+.flame-border::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:30px;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(0,0,0,0.9) 20%, transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(0,0,0,0.9) 20%, transparent 40%),
+    radial-gradient(circle at 10% 80%, rgba(0,0,0,0.9) 20%, transparent 40%),
+    radial-gradient(circle at 90% 85%, rgba(0,0,0,0.9) 20%, transparent 40%);
+  filter:blur(20px);
+  animation:flameFlicker 0.6s infinite alternate;
+}
+
+@keyframes flameFlicker{
+  0%{
+    transform:scale(1);
+    opacity:0.7;
+  }
+  100%{
+    transform:scale(1.08);
+    opacity:1;
+  }
+}
+
     </style>
 </head>
 
@@ -184,6 +330,7 @@ button:hover{
 
         <div id="status-message"></div>
         <audio id="end-audio" src="/static/end.mp3" preload="auto"></audio>
+        <audio id="amaterasu-audio" src="/static/amaterasu.mp3" preload="auto"></audio>
     </div>
 
 </div>
@@ -313,8 +460,9 @@ document.getElementById("load-code-button").onclick = async () => {
     const area = document.getElementById("code-scatter-area")
     area.innerHTML = ""
     if (GAME_MODE === "arrange") {
-    generateStars()
-    createSolarSystem()
+    // generateStars()
+    // createSolarSystem()
+    createSharingan()
     floatingElements=[]
     const rect=area.getBoundingClientRect()
 
@@ -356,6 +504,82 @@ document.getElementById("load-code-button").onclick = async () => {
     }
 }
 
+let amaterasuInterval = null
+function createSharingan(){
+    const area = document.getElementById("code-scatter-area")
+    area.innerHTML = ""
+
+    if(amaterasuInterval){
+        clearInterval(amaterasuInterval)
+        amaterasuInterval = null
+    }
+
+    const container = document.createElement("div")
+    container.className = "sharingan-container"
+
+    const eye = document.createElement("div")
+    eye.className = "sharingan-eye"
+
+    const center = document.createElement("div")
+    center.className = "sharingan-center"
+
+    const t1 = document.createElement("div")
+    const t2 = document.createElement("div")
+    const t3 = document.createElement("div")
+
+    t1.className="tomoe"
+    t2.className="tomoe"
+    t3.className="tomoe"
+
+    eye.appendChild(t1)
+    eye.appendChild(t2)
+    eye.appendChild(t3)
+    eye.appendChild(center)
+
+    container.appendChild(eye)
+    area.appendChild(container)
+
+    setTimeout(()=>{
+        activateAmaterasuBorder()
+        addBloodEffect(container)
+    },800)
+
+    amaterasuInterval = setInterval(()=>{
+        triggerAmaterasu(container)
+    },20000)
+}
+
+function triggerAmaterasu(container){
+    activateAmaterasuBorder()
+    addBloodEffect(container)
+}
+function addBloodEffect(container){
+    const blood = document.createElement("div")
+    blood.className = "blood"
+    container.appendChild(blood)
+
+    setTimeout(()=>{
+        blood.remove()
+    },2500)
+}
+function activateAmaterasuBorder(){
+    const audio = document.getElementById("amaterasu-audio")
+    if(!audio) return
+
+    audio.pause()
+    audio.currentTime = 0
+    audio.play().catch(()=>{})
+    const panel = document.getElementById("left-panel")
+    const flame = document.createElement("div")
+    flame.className = "flame-border"
+
+    panel.parentNode.insertBefore(flame, panel)
+
+
+    setTimeout(()=>{
+        flame.remove()
+    },4000)
+}
 function animate() {
     const area = document.getElementById("code-scatter-area")
     const rect = area.getBoundingClientRect()
@@ -416,6 +640,10 @@ function playEndAudio() {
 async function submitCode(auto = false) {
     clearInterval(timerInterval)
     lockEditor()
+    if (amaterasuInterval) {
+        clearInterval(amaterasuInterval)
+        amaterasuInterval = null
+    }
 
     const code = document.getElementById("user-code-input").value
     const name = document.getElementById("name").value
