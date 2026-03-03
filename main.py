@@ -156,13 +156,14 @@ def submit_code(data: SubmitRequest):
     if code.startswith("D-"):
         correct = normalize(DEBUG_CODES[code]["correct_code"])
         user = normalize(data.user_code)
-        score = DEBUG_CODES[code]["bugs"]
+        max_score = DEBUG_CODES[code]["bugs"]
         results = []
         for i in range(max(len(correct), len(user))):
             if (correct[i] if i < len(correct) else "") != (user[i] if i < len(user) else ""):
-                score -= 1
+                max_score -= 1
 
-        score = max(score, 0)
+        max_score = max(max_score, 0)
+        score = 0 
         for i in range(len(correct)):
             user_line = user[i] if i < len(user) else ""
             correct_line = correct[i]
@@ -185,7 +186,7 @@ def submit_code(data: SubmitRequest):
         }).eq("gmail", gmail).execute()
 
         return {"success": True,
-                "score": score, 
+                "score": max_score, 
                 "total": DEBUG_CODES[code]["bugs"],
                 "correct_code": correct,
                 "lines": results
