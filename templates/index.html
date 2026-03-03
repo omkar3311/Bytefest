@@ -292,7 +292,62 @@ button:hover{
     opacity:1;
   }
 }
+.debug-mode {
+  animation: none !important;
+}
 
+.debug-container {
+  padding: 25px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.debug-container h2 {
+  color: #00f5ff;
+  margin-bottom: 15px;
+}
+
+.debug-description {
+  background: rgba(255,255,255,0.06);
+  padding: 15px;
+  border-radius: 12px;
+  line-height: 1.6;
+  font-size: 15px;
+  border-left: 4px solid #00f5ff;
+}
+
+.debug-examples {
+  margin-top: 15px;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.timer-green { color: #00ff88; }
+.timer-yellow { color: #ffcc00; }
+.timer-red { color: #ff0033; }
+
+.timer-pulse {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+.welcome-floating {
+    position: absolute;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #00f5ff;
+    text-shadow: 0 0 20px #00f5ff;
+    white-space: nowrap;
+    pointer-events: none;
+}
+#code-scatter-area video {
+  pointer-events: none;
+}
     </style>
 </head>
 
@@ -374,7 +429,41 @@ function generateStars(count = 80) {
         area.appendChild(star)
     }
 }
+showWelcomeScreen()
 generateStars()
+function showWelcomeScreen() {
+    const area = document.getElementById("code-scatter-area");
+    area.innerHTML = "";
+
+    animationRunning = false;
+    floatingElements = [];
+
+    const welcome = document.createElement("div");
+    welcome.className = "welcome-floating";
+    welcome.innerText = "Welcome to Bytefest";
+
+    area.appendChild(welcome);
+
+    const rect = area.getBoundingClientRect();
+
+    const x = rect.width / 2 - 150;
+    const y = rect.height / 2 - 30;
+
+    welcome.style.transform = `translate(${x}px, ${y}px)`;
+
+    floatingElements.push({
+        el: welcome,
+        x: x,
+        y: y,
+        dx: 0.4,
+        dy: 0.3
+    });
+
+    if (!animationRunning) {
+        animationRunning = true;
+        animate();
+    }
+}
 function createSolarSystem(){
     const area=document.getElementById("code-scatter-area")
     area.innerHTML=""
@@ -411,6 +500,34 @@ function lockEditor() {
     submitBtn.disabled = true
     submitBtn.style.opacity = "0.6"
     submitBtn.style.cursor = "not-allowed"
+}
+function createSharinganVideo() {
+    const area = document.getElementById("code-scatter-area")
+    area.innerHTML = ""
+
+    if (amaterasuInterval) {
+        clearInterval(amaterasuInterval)
+        amaterasuInterval = null
+    }
+
+    area.style.position = "relative"
+
+    const video = document.createElement("video")
+    video.src = "/static/sharingan.mp4"
+    video.autoplay = true
+    video.loop = true
+    video.muted = true
+    video.playsInline = true
+
+    video.style.position = "absolute"
+    video.style.top = "0"
+    video.style.left = "0"
+    video.style.width = "100%"
+    video.style.height = "100%"
+    video.style.objectFit = "cover"
+    video.style.zIndex = "0"
+
+    area.appendChild(video)
 }
 document.getElementById("load-code-button").onclick = async () => {
     const nameInput = document.getElementById("name")
@@ -462,7 +579,8 @@ document.getElementById("load-code-button").onclick = async () => {
     // generateStars()
     // createSolarSystem()
     // createSharingan()
-    const effects = [createSolarSystem, createSharingan]
+    // createSharinganVideo()
+    const effects = [createSolarSystem, createSharingan,createSharinganVideo]
     const randomEffect = effects[Math.floor(Math.random() * effects.length)]
     randomEffect()
     floatingElements=[]
@@ -471,6 +589,8 @@ document.getElementById("load-code-button").onclick = async () => {
     data.code_elements.forEach(el=>{
         const d=document.createElement("div")
         d.className="code-element"
+        d.style.position = "absolute"
+        d.style.zIndex = "2"
         d.innerText=el
 
         const x=Math.random()*(rect.width-120)
@@ -494,16 +614,23 @@ document.getElementById("load-code-button").onclick = async () => {
 }
 
     if (GAME_MODE === "debug") {
-        area.innerHTML = `
-            <div style="padding:20px;font-size:16px;line-height:1.5">
-                <h3>🪲 Debugging Challenge</h3>
-                <br>
-                <p>${data.description.replace(/\n/g, "<br>")}</p>
+    const area = document.getElementById("code-scatter-area")
+    area.innerHTML = `
+        <div class="debug-container">
+            <h2>🪲 Debugging Challenge</h2>
+            <div class="debug-description">
+                ${data.description.replace(/\n/g, "<br>")}
             </div>
-        `;
+            <div class="debug-examples">
+                ${data.examples ? data.examples.replace(/\n/g, "<br>") : ""}
+            </div>
+        </div>
+    `;
 
-        document.getElementById("user-code-input").value = data.buggy_code;
-    }
+    document.getElementById("user-code-input").value = data.buggy_code;
+
+    area.classList.add("debug-mode");
+}
 }
 
 let amaterasuInterval = null

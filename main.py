@@ -52,7 +52,6 @@ def home(request: Request):
 def load_code(data: LoadRequest):
     code = data.secret_code.strip()
     name = data.name.strip()
-
     if code == "B-000":
         return {"success": True, "redirect": "/admin?mode=arrange"}
 
@@ -112,7 +111,7 @@ def normalize(code: str):
 def submit_code(data: SubmitRequest):
     code = data.secret_code
     gmail = data.gmail
-
+    
     if code.startswith("B-"):
         correct_raw = DEFAULT_CODES[code]
         user_raw = data.user_code
