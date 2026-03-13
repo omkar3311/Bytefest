@@ -15,10 +15,9 @@ from utility import DEFAULT_CODES, DEBUG_CODES, QR_DB ,QR_GAME
 load_dotenv()
 
 supabase = create_client(
-    os.getenv("supabase_url"),
-    os.getenv("supabase_key")
+    os.getenv("SUPABASE_URL"),
+    os.getenv("SUPABASE_KEY")
 )
-
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
