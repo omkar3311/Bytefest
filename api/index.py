@@ -33,6 +33,8 @@ SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
 
 def send_email(subject, body, to):
     try:
+        print("Sending email to:", to)
+        print("SMTP:", SMTP_SERVER, SMTP_PORT)
         msg = EmailMessage()
         msg["Subject"] = subject
         msg["From"] = SMTP_EMAIL
