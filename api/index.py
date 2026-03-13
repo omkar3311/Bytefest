@@ -1,19 +1,53 @@
+import sys
+import pathlib
+
+BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
+sys.path.append(str(BASE_DIR))
+
 from fastapi import FastAPI, Request, Form, Query, UploadFile, File
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse,RedirectResponse, FileResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from supabase import create_client
 # from dotenv import load_dotenv
+
 import os
 import qrcode
 import re
 import random
 import uuid
-from utility import DEFAULT_CODES, DEBUG_CODES, QR_DB ,QR_GAME
-import pathlib
+import smtplib
+from email.message import EmailMessage
+
+from utility import DEFAULT_CODES, DEBUG_CODES, QR_DB, QR_GAME
 
 # load_dotenv()
+
+
+SMTP_SERVER = os.getenv("SMTP_SERVER")
+SMTP_PORT = int(os.getenv("SMTP_PORT"))
+SMTP_EMAIL = os.getenv("SMTP_EMAIL")
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
+
+
+def send_email(subject, body, to):
+    try:
+        msg = EmailMessage()
+        msg["Subject"] = subject
+        msg["From"] = SMTP_EMAIL
+        msg["To"] = to
+        msg.set_content(body)
+
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+            server.starttls()
+            server.login(SMTP_EMAIL, SMTP_PASSWORD)
+            server.send_message(msg)
+
+        print("Email sent to", to)
+
+    except Exception as e:
+        print("Email error:", e)
 
 supabase = create_client(
     os.getenv("SUPABASE_URL"),
@@ -300,7 +334,22 @@ async def register_user(
         "fee": file_url,
         "auth": False
     }).execute()
+    send_email(
+    "ByteFest Registration Received",
+    f"""
+Hello {fullname},
 
+Your registration for ByteFest 2026 has been received.
+
+Your application is currently under review.
+Once approved, you will be able to participate in the event.
+
+Thank you for registering!
+
+Team ByteFest
+""",
+    email
+)
     return {"success": True}
 
 @app.get("/qr-hunt", response_class=HTMLResponse)
@@ -374,11 +423,35 @@ def approve_post(
     user_id: int = Form(...),
     action: str = Form(...)
 ):
+    user = (
+        supabase
+        .table("participant")
+        .select("name, gmail")
+        .eq("id", user_id)
+        .single()
+        .execute()
+        .data
+    )
     if action == "approve":
         supabase.table("participant") \
             .update({"auth": True}) \
             .eq("id", user_id) \
             .execute()
+        send_email(
+            "ByteFest Registration Approved 🎉",
+            f"""
+Hello {user['name']},
+
+Your registration for ByteFest has been approved.
+
+You can now participate in the event.
+
+Good luck and see you at ByteFest!
+
+Team ByteFest
+""",
+            user["gmail"]
+        )
 
     elif action == "decline":
         supabase.table("participant") \
