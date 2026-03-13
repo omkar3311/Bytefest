@@ -43,7 +43,7 @@ def send_email(subject, body, to):
             server.starttls()
             server.login(SMTP_EMAIL, SMTP_PASSWORD)
             server.send_message(msg)
-
+        print("demo")
         print("Email sent to", to)
 
     except Exception as e:
