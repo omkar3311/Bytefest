@@ -4,23 +4,30 @@ from fastapi.responses import HTMLResponse,RedirectResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from supabase import create_client
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import os
 import qrcode
 import re
 import random
 import uuid
 from utility import DEFAULT_CODES, DEBUG_CODES, QR_DB ,QR_GAME
+import pathlib
 
-load_dotenv()
+# load_dotenv()
 
 supabase = create_client(
     os.getenv("SUPABASE_URL"),
     os.getenv("SUPABASE_KEY")
 )
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+# app.mount("/static", StaticFiles(directory="static"), name="static")
+# templates = Jinja2Templates(directory="templates")
+
+
+BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
+
+app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
+templates = Jinja2Templates(directory=BASE_DIR / "templates")
 
 class LoadRequest(BaseModel):
     name: str
@@ -381,11 +388,11 @@ def approve_post(
 
     return RedirectResponse("/approve", status_code=303)
 
-QR_DIR = "static/qr"
+QR_DIR = BASE_DIR / "static" / "qr"
 os.makedirs(QR_DIR, exist_ok=True)
 
 @app.get("/generate", response_class=HTMLResponse)
-def home(request: Request):
+def generate_page(request: Request):
     return templates.TemplateResponse("qr_genrator.html", {
         "request": request,
         "qr_path": None
@@ -395,7 +402,7 @@ def home(request: Request):
 @app.post("/generate", response_class=HTMLResponse)
 def generate_qr(request: Request, question: str = Form(...)):
     filename = f"{uuid.uuid4()}.png"
-    file_path = f"{QR_DIR}/{filename}"
+    file_path = QR_DIR / filename
 
     qr = qrcode.QRCode(
         version=2,
@@ -403,11 +410,12 @@ def generate_qr(request: Request, question: str = Form(...)):
         box_size=10,
         border=4
     )
+
     qr.add_data(question)
     qr.make(fit=True)
 
     img = qr.make_image(fill_color="black", back_color="white")
-    img.save(file_path)
+    img.save(str(file_path))
 
     return templates.TemplateResponse("qr_genrator.html", {
         "request": request,
@@ -418,7 +426,7 @@ def generate_qr(request: Request, question: str = Form(...)):
 @app.get("/download/{filename}")
 def download_qr(filename: str):
     return FileResponse(
-        path=f"{QR_DIR}/{filename}",
+        path=str(QR_DIR / filename),
         media_type="image/png",
         filename="qr_code.png"
     )
