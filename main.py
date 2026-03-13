@@ -10,6 +10,8 @@ import qrcode
 import re
 import random
 import uuid
+import smtplib
+from email.message import EmailMessage
 from utility import DEFAULT_CODES, DEBUG_CODES, QR_DB ,QR_GAME
 
 load_dotenv()
@@ -18,6 +20,13 @@ supabase = create_client(
     os.getenv("SUPABASE_URL"),
     os.getenv("SUPABASE_KEY")
 )
+
+
+SMTP_SERVER = os.getenv("SMTP_SERVER")
+SMTP_PORT = int(os.getenv("SMTP_PORT"))
+SMTP_EMAIL = os.getenv("SMTP_EMAIL")
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
+
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
@@ -42,6 +51,26 @@ class QRScanRequest(BaseModel):
 class ResultRequest(BaseModel):
     full_name: str
     result: str
+
+def send_email(subject, body, to):
+    try:
+        print("Sending email to:", to)
+        print("SMTP:", SMTP_SERVER, SMTP_PORT)
+        msg = EmailMessage()
+        msg["Subject"] = subject
+        msg["From"] = SMTP_EMAIL
+        msg["To"] = to
+        msg.set_content(body)
+
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+            server.starttls()
+            server.login(SMTP_EMAIL, SMTP_PASSWORD)
+            server.send_message(msg)
+        print("demo")
+        print("Email sent to", to)
+
+    except Exception as e:
+        print("Email error:", e)
 
 @app.get("/")
 def home(request: Request):
@@ -367,11 +396,35 @@ def approve_post(
     user_id: int = Form(...),
     action: str = Form(...)
 ):
+    user = (
+        supabase
+        .table("participant")
+        .select("name, gmail")
+        .eq("id", user_id)
+        .single()
+        .execute()
+        .data
+    )
     if action == "approve":
         supabase.table("participant") \
             .update({"auth": True}) \
             .eq("id", user_id) \
             .execute()
+        send_email(
+            "ByteFest Registration Approved 🎉",
+            f"""
+Hello {user['name']},
+
+Your registration for ByteFest has been approved.
+
+You can now participate in the event.
+
+Good luck and see you at ByteFest!
+
+Team ByteFest
+""",
+            user["gmail"]
+        )
 
     elif action == "decline":
         supabase.table("participant") \
