@@ -193,6 +193,9 @@ button:disabled{
 <div class="main">
     <div class="container">
         <h3>QR Hunt</h3>
+        <p id="timer" style="color:#00f5ff;font-weight:600;margin-bottom:10px;">
+        Time: 00:00
+    </p>
         <div id="nameSection">
             <p style="margin-bottom:8px;color:#cbd5f5;">Enter your Gmail to start</p>
             <input id="nameInput" placeholder="Your Gmail">
@@ -225,6 +228,10 @@ let resultSubmitted = false;
 let nextDestination = "";
 let isLastRound = false;
 
+let startTime = null;
+let timerInterval = null;
+
+const timerEl = document.getElementById("timer");
 const questionEl = document.getElementById("question");
 const triesEl = document.getElementById("tries");
 const statusEl = document.getElementById("status");
@@ -238,9 +245,10 @@ const readerEl = document.getElementById("reader");
 
 triesEl.innerText = "Attempts left: 3";
 
-
 startBtn.onclick = async () => {
+
     const name = nameInput.value.trim();
+
     if (!name) {
         statusEl.innerText = "Please enter your Gmail";
         return;
@@ -265,6 +273,16 @@ startBtn.onclick = async () => {
     }
 
     playerName = name;
+
+    startTime = Date.now();
+
+    timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const minutes = String(Math.floor(elapsed / 60)).padStart(2,'0');
+        const seconds = String(elapsed % 60).padStart(2,'0');
+        timerEl.innerText = "Time: " + minutes + ":" + seconds;
+    },1000);
+
     statusEl.innerText = "Scan your QR";
 
     nameSection.style.display = "none";
@@ -275,6 +293,7 @@ startBtn.onclick = async () => {
 
 
 async function startScanner() {
+
     resetRoundState();
 
     qrScanner = new Html5Qrcode("reader");
@@ -284,6 +303,7 @@ async function startScanner() {
             { facingMode: "environment" },
             { fps: 10, qrbox: 200 },
             async (qrText) => {
+
                 await qrScanner.stop();
 
                 const res = await fetch("/get-answer", {
@@ -296,7 +316,7 @@ async function startScanner() {
                 });
 
                 const data = await res.json();
-                statusEl.innerText = data.answer;
+
                 if (!data.answer) {
                     statusEl.innerText = "Wrong QR";
                     return;
@@ -328,26 +348,48 @@ async function startScanner() {
 
 
 submitBtn.onclick = async () => {
+
     if (resultSubmitted) return;
 
     const userAnswer = answerInput.value.trim().toLowerCase();
     if (!userAnswer) return;
-    if(userAnswer != correctAnswer) {
-      statusEl.innerHTML = `
-            <p style="color: red; font-weight: bold;">Wrong answer</p>`
+
+    if (userAnswer !== correctAnswer) {
+        statusEl.innerHTML = "<p style='color:red;font-weight:bold;'>Wrong answer</p>";
     }
+
     if (userAnswer === correctAnswer) {
+
         resultSubmitted = true;
         submitBtn.disabled = true;
 
-        statusEl.innerHTML = `
-            <b style="color: green;">PASS</b><br>
-            ${isLastRound 
-                ? "<b>GAME END</b>" 
-                : `Next Destination: <b>${nextDestination}</b>`}
-        `;
+        if (isLastRound) {
 
-        if (!isLastRound) {
+            clearInterval(timerInterval);
+
+            const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+
+            statusEl.innerHTML =
+                "<b style='color:green;'>PASS</b><br>" +
+                "<b>GAME END</b><br>" +
+                "Time Taken: <b>" + timeTaken + " seconds</b>";
+
+            await fetch("/submit-result", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    full_name: playerName,
+                    result: "pass",
+                    time_taken: timeTaken
+                })
+            });
+
+        } else {
+
+            statusEl.innerHTML =
+                "<b style='color:green;'>PASS</b><br>" +
+                "Next Destination: <b>" + nextDestination + "</b>";
+
             const nextBtn = document.createElement("button");
             nextBtn.innerText = "Scan Next QR";
             nextBtn.style.marginTop = "10px";
@@ -361,15 +403,6 @@ submitBtn.onclick = async () => {
             statusEl.appendChild(nextBtn);
         }
 
-        await fetch("/submit-result", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                full_name: playerName,
-                result: "pass"
-            })
-        });
-
         return;
     }
 
@@ -377,8 +410,11 @@ submitBtn.onclick = async () => {
     triesEl.innerText = "Attempts left: " + attempts;
 
     if (attempts === 0) {
+
         resultSubmitted = true;
         submitBtn.disabled = true;
+
+        clearInterval(timerInterval);
 
         statusEl.innerText = "FAIL";
 
@@ -395,6 +431,7 @@ submitBtn.onclick = async () => {
 
 
 function resetRoundState() {
+
     correctAnswer = "";
     attempts = 3;
     resultSubmitted = false;
@@ -405,6 +442,7 @@ function resetRoundState() {
     answerInput.style.display = "none";
     submitBtn.style.display = "none";
     triesEl.style.display = "none";
+
     statusEl.innerText = "Scan your QR";
 }
 </script>

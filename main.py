@@ -51,6 +51,7 @@ class QRScanRequest(BaseModel):
 class ResultRequest(BaseModel):
     full_name: str
     result: str
+    time_taken: int | None = None
 
 def send_email(subject, body, to):
     try:
@@ -365,6 +366,7 @@ def get_answer(data: QRScanRequest):
 
 @app.post("/submit-result")
 def submit_result(data: ResultRequest):
+
     if data.result == "fail":
         supabase.table("participant") \
             .update({"round1": False}) \
@@ -373,7 +375,16 @@ def submit_result(data: ResultRequest):
 
         return {"status": "failed"}
 
-    return {"status": "passed"}
+    if data.result == "pass":
+        supabase.table("participant") \
+            .update({
+                "round1": False,
+                "r-time": str(data.time_taken)
+            }) \
+            .eq("gmail", data.full_name.lower()) \
+            .execute()
+
+        return {"status": "passed"}
 
 @app.get("/approve")
 def approve_get(request: Request):

@@ -1,43 +1,43 @@
 DEFAULT_CODES = {
-"B-001": "#include <stdio.h>\nint main(){\nint a;\nint b;\nscanf(\"%d %d\",&a,&b);\nint c;\nc=a+b;\nprintf(\"%d\",c);\nreturn 0;\n}",
+"B-001": "#include <stdio.h>\nint main(){\nint a;\nint b;\nint c;\nscanf(\"%d %d\",&a,&b);\nc=a+b;\nprintf(\"%d\",c);\nreturn 0;\n}",
 
 "B-002": "#include <stdio.h>\nint main(){\nint a,b;\nscanf(\"%d %d\",&a,&b);\nif(a>b)\nprintf(\"%d\",a);\nelse\nprintf(\"%d\",b);\nreturn 0;\n}",
 
 "B-003": "#include <stdio.h>\nint main(){\nint n;\nscanf(\"%d\",&n);\nif(n%2==0)\nprintf(\"Even\");\nelse\nprintf(\"Odd\");\nreturn 0;\n}",
 
-"B-004": "#include <stdio.h>\nint main(){\nint n;\nscanf(\"%d\",&n);\nint i,s=0;\nfor(i=1;i<=n;i++)\ns=s+i;\nprintf(\"%d\",s);\nreturn 0;\n}",
+"B-004": "#include <stdio.h>\nint main(){\nint n;\nint i,s=0;\nscanf(\"%d\",&n);\nfor(i=1;i<=n;i++)\ns=s+i;\nprintf(\"%d\",s);\nreturn 0;\n}",
 
-"B-005": "#include <stdio.h>\nint main(){\nint n;\nscanf(\"%d\",&n);\nint i,f=1;\nfor(i=1;i<=n;i++)\nf=f*i;\nprintf(\"%d\",f);\nreturn 0;\n}",
+"B-005": "#include <stdio.h>\nint main(){\nint n;\nint i,f=1;\nscanf(\"%d\",&n);\nfor(i=1;i<=n;i++)\nf=f*i;\nprintf(\"%d\",f);\nreturn 0;\n}",
 
-"B-006": "#include <stdio.h>\nint main(){\nint n;\nscanf(\"%d\",&n);\nint i;\nfor(i=1;i<=n;i++)\nprintf(\"%d \",i);\nprintf(\"\\n\");\nreturn 0;\n}",
+"B-006": "#include <stdio.h>\nint main(){\nint n;\nint i;\nscanf(\"%d\",&n);\nfor(i=1;i<=n;i++)\nprintf(\"%d \",i);\nprintf(\"\\n\");\nreturn 0;\n}",
 
 "B-007": "#include <stdio.h>\nint main(){\nint a,b;\nscanf(\"%d %d\",&a,&b);\nint t=a;\na=b;\nb=t;\nprintf(\"%d %d\",a,b);\nreturn 0;\n}",
 
 "B-008": "#include <stdio.h>\nint main(){\nint n;\nscanf(\"%d\",&n);\nif(n>0)\nprintf(\"Positive\");\nelse\nprintf(\"NotPositive\");\nreturn 0;\n}",
 
-"B-009": "#include <stdio.h>\nint main(){\nint n;\nscanf(\"%d\",&n);\nint s,c;\ns=n*n;\nc=s;\nprintf(\"%d\",c);\nreturn 0;\n}",
+"B-009": "#include <stdio.h>\nint main(){\nint n;\nint s,c;\nscanf(\"%d\",&n);\ns=n*n;\nc=s;\nprintf(\"%d\",c);\nreturn 0;\n}",
 
-"B-010": "#include <stdio.h>\nint main(){\nchar c;\nscanf(\" %c\",&c);\nchar n;\nn=c+1;\nprintf(\"%c\",n);\nreturn 0;\n}",
+"B-010": "#include <stdio.h>\nint main(){\nchar c;\nchar n;\nscanf(\" %c\",&c);\nn=c+1;\nprintf(\"%c\",n);\nreturn 0;\n}",
 
-"B-011": "#include <stdio.h>\nint main(){\nint x;\nscanf(\"%d\",&x);\nint y;\ny=x-1;\nx=y;\nprintf(\"%d\",x);\nreturn 0;\n}",
+"B-011": "#include <stdio.h>\nint main(){\nint x;\nint y;\nscanf(\"%d\",&x);\ny=x-1;\nx=y;\nprintf(\"%d\",x);\nreturn 0;\n}",
 
-"B-012": "#include <stdio.h>\nint main(){\nint a;\nscanf(\"%d\",&a);\nint r;\nr=a%10;\na=r;\nprintf(\"%d\",a);\nreturn 0;\n}",
+"B-012": "#include <stdio.h>\nint main(){\nint a;\nint r;\nscanf(\"%d\",&a);\nr=a%10;\na=r;\nprintf(\"%d\",a);\nreturn 0;\n}",
 
-"B-013": "#include <stdio.h>\nint main(){\nint a,b;\nscanf(\"%d %d\",&a,&b);\nint r;\nr=a*b;\nb=r;\nprintf(\"%d\",b);\nreturn 0;\n}",
+"B-013": "#include <stdio.h>\nint main(){\nint a,b;\nint r;\nscanf(\"%d %d\",&a,&b);\nr=a*b;\nb=r;\nprintf(\"%d\",b);\nreturn 0;\n}",
 
 "B-014": "#include <stdio.h>\nint main(){\nint n;\nscanf(\"%d\",&n);\nif(n<0)\nn=-n;\nelse\nn=n;\nprintf(\"%d\",n);\nreturn 0;\n}",
 
-"B-015": "#include <stdio.h>\nint main(){\nint n;\nscanf(\"%d\",&n);\nint i,c=0;\nfor(i=1;i<=n;i++)\nc=c+1;\nprintf(\"%d\",c);\nreturn 0;\n}",
+"B-015": "#include <stdio.h>\nint main(){\nint n;\nint i,c=0;\nscanf(\"%d\",&n);\nfor(i=1;i<=n;i++)\nc=c+1;\nprintf(\"%d\",c);\nreturn 0;\n}",
 
-"B-016": "#include <stdio.h>\nint main(){\nint a;\nscanf(\"%d\",&a);\nint r;\nr=a*a;\na=r;\nprintf(\"%d\",a);\nreturn 0;\n}",
+"B-016": "#include <stdio.h>\nint main(){\nint a;\nint r;\nscanf(\"%d\",&a);\nr=a*a;\na=r;\nprintf(\"%d\",a);\nreturn 0;\n}",
 
 "B-017": "#include <stdio.h>\nint main(){\nint n;\nscanf(\"%d\",&n);\nif(n==0)\nprintf(\"Zero\");\nelse\nprintf(\"NonZero\");\nreturn 0;\n}",
 
-"B-018": "#include <stdio.h>\nint main(){\nint n;\nscanf(\"%d\",&n);\nint i,s=1;\nfor(i=1;i<=n;i++)\ns=s+1;\nprintf(\"%d\",s);\nreturn 0;\n}",
+"B-018": "#include <stdio.h>\nint main(){\nint n;\nint i,s=1;\nscanf(\"%d\",&n);\nfor(i=1;i<=n;i++)\ns=s+1;\nprintf(\"%d\",s);\nreturn 0;\n}",
 
-"B-019": "#include <stdio.h>\nint main(){\nchar c;\nscanf(\" %c\",&c);\nchar d;\nd=c-1;\nc=d;\nprintf(\"%c\",c);\nreturn 0;\n}",
+"B-019": "#include <stdio.h>\nint main(){\nchar c;\nhar d;\nscanf(\" %c\",&c);\ncd=c-1;\nc=d;\nprintf(\"%c\",c);\nreturn 0;\n}",
 
-"B-020": "#include <stdio.h>\nint main(){\nint a,b;\nscanf(\"%d %d\",&a,&b);\nint r;\nr=a-b;\na=r;\nprintf(\"%d\",a);\nreturn 0;\n}"
+"B-020": "#include <stdio.h>\nint main(){\nint a,b;\nint r;\nscanf(\"%d %d\",&a,&b);\nr=a-b;\na=r;\nprintf(\"%d\",a);\nreturn 0;\n}"
 }
 print(DEFAULT_CODES["B-001"].splitlines())
 
@@ -86,13 +86,13 @@ int* twoSum(int nums[], int n, int target) {
         "description": "Given an integer x, determine whether it is a palindrome. An integer is a palindrome when it reads the same backward as forward.\n\nExample 1:\nInput: x = 121\nOutput: 1\n\nExample 2:\nInput: x = -121\nOutput: 0",
         "buggy_code": """
 int isPalindrome(int x) {
-    int original = x
-    int reversed = 0;
-    while(x >= 0) {
-        reversed = reversed * 10;
-        x = x / 10;
+    int original = 0, reversed = 1;
+    if(x < 0) return 1;
+    while(x == 0) {
+        reversed = reversed * 10 + x / 10;
+        x /= 10;
     }
-    return reversed == x;
+    return original == reversed;
 }
 """,
         "correct_code": """
@@ -116,9 +116,12 @@ int maxSubArray(int nums[], int n) {
     int current = nums[0];
     int maximum = 0
     for(int i = 0; i <= n; i++) {
-        current = nums[i];
+        if(current + nums[i] > nums[i])
+            current = current - nums[i];
+        else
+            current = nums[i];
         if(current > maximum)
-            maximum = nums[i];
+            maximum = current;
     }
     return current;
 }
@@ -152,8 +155,11 @@ int isValid(char* s) {
         if(c == '(' || c == '{' || c == '[')
             stack[top++] = c;
         else {
-            char open = stack[top];
-            if(c == ')')
+            if(top == -1) return 0;
+            char open = stack[top--];
+            if((c == ')' && open != '(') ||
+               (c == '}' && open != '{') ||
+               (c == ']' && open != '['))
                 return 1;
         }
     }
@@ -220,6 +226,8 @@ int maxProfit(int prices[], int n) {
     for(int i = 0; i <= n; i++) {
         if(prices[i] > minPrice)
             profit = prices[i];
+        else if(prices[i] - minPrice > profit)
+            profit = prices[i] - minPrice;
     }
     return prices;
 }
@@ -476,8 +484,6 @@ int countVowels(char str[]) {
 }
 """,
         "correct_code": """
-#include <ctype.h>
-
 int countVowels(char str[]) {
     int count = 0;
     for(int i = 0; str[i] != '\\0'; i++) {
