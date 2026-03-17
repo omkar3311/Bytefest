@@ -356,11 +356,12 @@ def get_answer(data: QRScanRequest):
 
     round_data = QR_GAME[round_key]
     question = random.choice(round_data["questions"])
-
+    destination = random.choice(round_data["destination"])
     return {
         "question": question["q"],
         "answer": question["a"],
-        "destination": round_data["destination"],
+        # "destination": round_data["destination"],
+        "destination": destination,
         "is_last_round": round_key == "round_3"
     }
 
