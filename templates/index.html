@@ -577,12 +577,12 @@ document.getElementById("load-code-button").onclick = async () => {
     area.innerHTML = ""
     if (GAME_MODE === "arrange") {
      generateStars()
-    // createSolarSystem()
-    // createSharingan()
-    // createSharinganVideo()
+    createSolarSystem()
+    //createSharingan()
+    //createSharinganVideo()
     const effects = [createSolarSystem]
     const randomEffect = effects[Math.floor(Math.random() * effects.length)]
-    randomEffect()
+    // randomEffect()
     floatingElements=[]
     const rect=area.getBoundingClientRect()
 
