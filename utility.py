@@ -613,13 +613,28 @@ QR_DB = {
 
 QR_GAME = {
     "round_1": {
-        "destination": ["Every scholar meets me before becoming one","Interviews and opportunities begin from here.","Where signals travel, circuits glow, and telecommunication technologies grow.","The department reviews the documents and conducts a site visit to check suitability and compliance with the Master Plan."],
+        "destination": [
+            "Every scholar meets me before becoming one",
+            "Interviews and opportunities begin from here.",
+            "Where signals travel, circuits glow, and telecommunication technologies grow.",
+            "The department reviews the documents and conducts a site visit to check suitability and compliance with the Master Plan."
+        ],
         "questions": [
-            {"q": "2 + 3 =", "a": "5"},
-            {"q": "10 - 6 =", "a": "4"},
-            {"q": "4 * 2 =", "a": "8"},
-            {"q": "16 / 4 =", "a": "4"},
-            {"q": "5 + 5 =", "a": "10"}
+            {"q": "Find the missing number: 2, 6, 12, 20, ?", "a": "30"},
+            {"q": "If 5 workers complete a work in 10 days, how many days will 10 workers take?", "a": "5"},
+            {"q": "What is 25% of 240?", "a": "60"},
+            {"q": "If today is Monday, what day will it be after 10 days?", "a": "Thursday"},
+            {"q": "If 12 pencils cost ₹36, what is the cost of 8 pencils?", "a": "24"},
+            {"q": "If 2x = 20, then x² = ?", "a": "100"},
+            {"q": "Find the next number: 2, 3, 5, 9, 17, ?", "a": "33"},
+            {"q": "If today is Friday, what day after 15 days?", "a": "Saturday"},
+            {"q": "If CAT = DBU, then DOG = ?", "a": "EPH"},
+            {"q": "Book : Read :: Food : ?", "a": "Eat"},
+            {"q": "Ravi walks 10 m north, then 10 m east. Where is he from start?", "a": "North-East"},
+            {"q": "A is B’s mother. B is C’s brother. What is A to C?", "a": "Mother"},
+            {"q": "A, C, F, J, ?", "a": "O"},
+            {"q": "If 123 = 6, 456 = 15, then 789 = ?", "a": "24"},
+            {"q": "Odd one out: 2, 3, 5, 9", "a": "9"}
         ]
     },
 
