@@ -652,11 +652,16 @@ QR_GAME = {
     "round_3": {
         "destination": "LAB",
         "questions": [
-            {"q": "3 + 7 =", "a": "10"},
-            {"q": "8 * 2 =", "a": "16"},
-            {"q": "18 / 6 =", "a": "3"},
-            {"q": "14 - 4 =", "a": "10"},
-            {"q": "5 * 3 =", "a": "15"}
+            {"q": "Find the missing number: 3, 9, 18, 30, ?", "a": "45"},
+            {"q": "If 4 workers complete a work in 12 days, how many days will 8 workers take?", "a": "6"},
+            {"q": "What is 20% of 150?", "a": "30"},
+            {"q": "If today is Wednesday, what day will it be after 9 days?", "a": "Friday"},
+            {"q": "If 10 pens cost ₹50, what is the cost of 6 pens?", "a": "30"},
+            {"q": "If 3x = 27, then x² = ?", "a": "81"},
+            {"q": "Find the next number: 1, 4, 9, 16, ?", "a": "25"},
+            {"q": "If today is Sunday, what day after 12 days?", "a": "Friday"},
+            {"q": "If BAT = DCV, then CAR = ?", "a": "DBS"},
+            {"q": "Pen : Write :: Knife : ?", "a": "Cut"}
         ]
     }
 }

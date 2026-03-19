@@ -88,12 +88,16 @@ def load_code(data: LoadRequest):
         return {"success": True, "redirect": "/admin?mode=debug"}
 
     if code.startswith("B-") and code in DEFAULT_CODES:
-        res = supabase.table("participant").select("auth").eq("gmail", data.name.lower()).execute()
+        res = supabase.table("participant").select("auth, B-time").eq("gmail", data.name.lower()).execute()
         if not res.data:
             return {"success": False, "message": " User not found"}
 
         if res.data[0]["auth"] is False:
             return {"success": False, "message": "User Not Approved"}
+        
+        b_time = res.data[0].get("B-time")
+        if b_time is not None and str(b_time).strip() != "":
+            return {"success": False, "message": "No second Attempt allowed"}
 
         # elements = DEFAULT_CODES[code].replace("\n", " \n ").split()
         elements = DEFAULT_CODES[code].splitlines()
@@ -106,12 +110,15 @@ def load_code(data: LoadRequest):
         }
 
     if code.startswith("D-") and code in DEBUG_CODES:
-        res = supabase.table("participant").select("auth").eq("gmail", data.name.lower()).execute()
+        res = supabase.table("participant").select("auth , D-time").eq("gmail", data.name.lower()).execute()
         if not res.data:
             return {"status": "not_found"}
 
         if res.data[0]["auth"] is False:
             return {"success": False, "message": "Not Approved"}
+        
+        if res.data[0]["D-time"]:
+            return {"success": False, "message": "No second Attempt allowed"}
 
         return {
             "success": True,
