@@ -457,7 +457,7 @@ QR_DIR = "static/qr"
 os.makedirs(QR_DIR, exist_ok=True)
 
 @app.get("/generate", response_class=HTMLResponse)
-def home(request: Request):
+def generate_page(request: Request):
     return templates.TemplateResponse("qr_genrator.html", {
         "request": request,
         "qr_path": None
