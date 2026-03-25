@@ -505,3 +505,37 @@ def download_qr(filename: str):
         media_type="image/png",
         filename="qr_code.png"
     )
+
+@app.get("/fun", response_class=HTMLResponse)
+def fun_page(request: Request):
+    return templates.TemplateResponse("fun.html", {"request": request})
+
+
+FUN_QUE = [
+    {"q": "How many months have 28 days?", "a": "All months"},
+    {"q": "If 2+2×2 = ?", "a": "6"},
+    {"q": "Which weighs more: 1kg cotton or 1kg iron?", "a": "Same"},
+    {"q": "A farmer has 17 sheep, all but 9 die. How many left?", "a": "9"},
+    {"q": "If you overtake second place, what position are you?", "a": "Second"},
+    {"q": "What comes next: 2, 4, 8, 16, ?", "a": "32"},
+    {"q": "What has hands but can't clap?", "a": "Clock"},
+    {"q": "What gets wetter as it dries?", "a": "Towel"},
+    {"q": "What has keys but no locks?", "a": "Keyboard"},
+    {"q": "What goes up but never comes down?", "a": "Age"}
+]
+
+
+@app.get("/fun/random")
+def fun_random():
+    return random.choice(FUN_QUE)
+
+
+@app.post("/fun/check")
+def fun_check(data: dict):
+    user = data["user"].lower().strip()
+    correct = data["correct"].lower().strip()
+
+    if user == correct:
+        return {"result": "correct"}
+    else:
+        return {"result": "wrong"}
