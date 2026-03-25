@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+.env/
+env/
+.venv/
+ml310/
+
+# Environment Variables
+.env
+.env.local
+.env.production
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Mac
+.DS_Store
+
+# Logs
+*.log
+
+# Database
+*.db
+*.sqlite3
+
+# Python build
+build/
+dist/
+*.egg-info/
+
+# Testing
+.coverage
+pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Vercel
+.vercel
+
+# Static generated files (optional)
+static/qr/*
