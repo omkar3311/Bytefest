@@ -614,10 +614,9 @@ QR_DB = {
 QR_GAME = {
     "round_1": {
         "destination": [
-            "Every scholar meets me before becoming one",
-            "Interviews and opportunities begin from here.",
-            "Where signals travel, circuits glow, and telecommunication technologies grow.",
-            "The department reviews the documents and conducts a site visit to check suitability and compliance with the Master Plan."
+            "Every journey starts as you walk through me,I welcome all to where you’re meant to be.",
+            "Dream jobs begin and futures take form,Find the place that keeps careers warm.",
+            "Voices echo and talents shine bright,Find the hall filled with sound and light"
         ],
         "questions": [
             {"q": "Find the missing number: 2, 6, 12, 20, ?", "a": "30"},
