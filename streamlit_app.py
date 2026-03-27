@@ -198,7 +198,7 @@ with tab3:
 
         df = df.sort_values(
             by=["B-score","B-time"],
-            ascending=[False,True]
+            ascending=[False,False]
         )
 
         df.insert(0,"Rank",range(1,len(df)+1))
@@ -274,7 +274,7 @@ with tab4:
 
         df = df.sort_values(
             by=["D-score","D-time"],
-            ascending=[False,True]
+            ascending=[False,False]
         )
 
         df.insert(0,"Rank",range(1,len(df)+1))
