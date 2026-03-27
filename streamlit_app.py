@@ -124,7 +124,7 @@ with tab2:
     if data:
 
         df = pd.DataFrame(data)
-
+        df = df[df["r-time"].notna()]
         df["r-time"] = df["r-time"].astype(int)
 
         df = df.sort_values("r-time")
