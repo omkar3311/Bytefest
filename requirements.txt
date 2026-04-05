@@ -7,3 +7,4 @@ pydantic
 python-multipart
 qrcode
 pillow
+starlette==0.37.2
