@@ -25,36 +25,36 @@ from utility import DEFAULT_CODES, DEBUG_CODES, QR_DB, QR_GAME
 # load_dotenv()
 
 
-SMTP_SERVER = os.getenv("SMTP_SERVER")
-SMTP_PORT = int(os.getenv("SMTP_PORT"))
-SMTP_EMAIL = os.getenv("SMTP_EMAIL")
-SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
+# SMTP_SERVER = os.getenv("SMTP_SERVER")
+# SMTP_PORT = int(os.getenv("SMTP_PORT"))
+# SMTP_EMAIL = os.getenv("SMTP_EMAIL")
+# SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
 
 
-def send_email(subject, body, to):
-    try:
-        print("Sending email to:", to)
-        print("SMTP:", SMTP_SERVER, SMTP_PORT)
-        msg = EmailMessage()
-        msg["Subject"] = subject
-        msg["From"] = SMTP_EMAIL
-        msg["To"] = to
-        msg.set_content(body)
+# def send_email(subject, body, to):
+#     try:
+#         print("Sending email to:", to)
+#         print("SMTP:", SMTP_SERVER, SMTP_PORT)
+#         msg = EmailMessage()
+#         msg["Subject"] = subject
+#         msg["From"] = SMTP_EMAIL
+#         msg["To"] = to
+#         msg.set_content(body)
 
-        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-            server.starttls()
-            server.login(SMTP_EMAIL, SMTP_PASSWORD)
-            server.send_message(msg)
-        print("demo")
-        print("Email sent to", to)
+#         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+#             server.starttls()
+#             server.login(SMTP_EMAIL, SMTP_PASSWORD)
+#             server.send_message(msg)
+#         print("demo")
+#         print("Email sent to", to)
 
-    except Exception as e:
-        print("Email error:", e)
+#     except Exception as e:
+#         print("Email error:", e)
 
-supabase = create_client(
-    os.getenv("SUPABASE_URL"),
-    os.getenv("SUPABASE_KEY")
-)
+# supabase = create_client(
+#     os.getenv("SUPABASE_URL"),
+#     os.getenv("SUPABASE_KEY")
+# )
 app = FastAPI()
 # app.mount("/static", StaticFiles(directory="static"), name="static")
 # templates = Jinja2Templates(directory="templates")
@@ -101,12 +101,12 @@ def load_code(data: LoadRequest):
         return {"success": True, "redirect": "/admin?mode=debug"}
 
     if code.startswith("B-") and code in DEFAULT_CODES:
-        res = supabase.table("participant").select("auth").eq("gmail", data.name.lower()).execute()
-        if not res.data:
-            return {"success": False, "message": " User not found"}
+        # res = supabase.table("participant").select("auth").eq("gmail", data.name.lower()).execute()
+        # if not res.data:
+        #     return {"success": False, "message": " User not found"}
 
-        if res.data[0]["auth"] is False:
-            return {"success": False, "message": "User Not Approved"}
+        # if res.data[0]["auth"] is False:
+        #     return {"success": False, "message": "User Not Approved"}
 
         # elements = DEFAULT_CODES[code].replace("\n", " \n ").split()
         elements = DEFAULT_CODES[code].splitlines()
@@ -115,16 +115,16 @@ def load_code(data: LoadRequest):
             "mode": "arrange",
             "user_id": code,
             "code_elements": elements,
-            "time_limit": 120
+            "time_limit": 300
         }
 
     if code.startswith("D-") and code in DEBUG_CODES:
-        res = supabase.table("participant").select("auth").eq("gmail", data.name.lower()).execute()
-        if not res.data:
-            return {"status": "not_found"}
+        # res = supabase.table("participant").select("auth").eq("gmail", data.name.lower()).execute()
+        # if not res.data:
+        #     return {"status": "not_found"}
 
-        if res.data[0]["auth"] is False:
-            return {"success": False, "message": "Not Approved"}
+        # if res.data[0]["auth"] is False:
+        #     return {"success": False, "message": "Not Approved"}
 
         return {
             "success": True,
@@ -132,7 +132,7 @@ def load_code(data: LoadRequest):
             "user_id": code,
             "description": DEBUG_CODES[code]["description"],
             "buggy_code": DEBUG_CODES[code]["buggy_code"],
-            "time_limit": 120
+            "time_limit": 300
         }
 
     return {"success": False, "message": "Invalid secret code"}
@@ -179,12 +179,12 @@ def submit_code(data: SubmitRequest):
                 "is_correct": is_correct
             })
 
-        supabase.table("participant").update({
-            "mode": "arrange",
-            "code": code,
-            "B-score": score,
-            "B-time": data.time_taken
-        }).eq("gmail", gmail).execute()
+        # supabase.table("participant").update({
+        #     "mode": "arrange",
+        #     "code": code,
+        #     "B-score": score,
+        #     "B-time": data.time_taken
+        # }).eq("gmail", gmail).execute()
 
         return {
             "success": True,
@@ -219,12 +219,12 @@ def submit_code(data: SubmitRequest):
                 "user": user_line,
                 "is_correct": is_correct
             })
-        supabase.table("participant").update({
-            "mode": "debug",
-            "code" : code,
-            "D-score": score,
-            "D-time": data.time_taken
-        }).eq("gmail", gmail).execute()
+        # supabase.table("participant").update({
+        #     "mode": "debug",
+        #     "code" : code,
+        #     "D-score": score,
+        #     "D-time": data.time_taken
+        # }).eq("gmail", gmail).execute()
 
         return {"success": True,
                 "score": max_score, 
@@ -233,147 +233,147 @@ def submit_code(data: SubmitRequest):
                 "lines": results
                 }
 
-@app.get("/admin")
-def admin_panel(request: Request, mode: str | None = Query(default=None)):
-    if mode == "arrange":
-        rows = (
-            supabase
-            .table("participant")
-            .select("name, mode, B-score, B-time")
-            .eq("mode", "arrange")
-            .order("B-score", desc=True)
-            .order("B-time", desc=True)
-            .execute()
-            .data
-        )
+# @app.get("/admin")
+# def admin_panel(request: Request, mode: str | None = Query(default=None)):
+#     if mode == "arrange":
+#         rows = (
+#             supabase
+#             .table("participant")
+#             .select("name, mode, B-score, B-time")
+#             .eq("mode", "arrange")
+#             .order("B-score", desc=True)
+#             .order("B-time", desc=True)
+#             .execute()
+#             .data
+#         )
 
-        ranked = [
-            {
-                "rank": i + 1,
-                "name": r["name"],
-                "score": r["B-score"],
-                "time": r["B-time"],
-                "mode": "arrange"
-            }
-            for i, r in enumerate(rows)
-        ]
+#         ranked = [
+#             {
+#                 "rank": i + 1,
+#                 "name": r["name"],
+#                 "score": r["B-score"],
+#                 "time": r["B-time"],
+#                 "mode": "arrange"
+#             }
+#             for i, r in enumerate(rows)
+#         ]
 
-        return templates.TemplateResponse(
-            "admin.html",
-            {
-                "request": request,
-                "participants": ranked,
-                "mode": "arrange"
-            }
-        )
+#         return templates.TemplateResponse(
+#             "admin.html",
+#             {
+#                 "request": request,
+#                 "participants": ranked,
+#                 "mode": "arrange"
+#             }
+#         )
         
-    if mode == "debug":
-        rows = (
-            supabase
-            .table("participant")
-            .select("name, mode, D-score, D-time")
-            .eq("mode", "debug")
-            .order("D-score", desc=True)
-            .order("D-time", desc=True)
-            .execute()
-            .data
-        )
+#     if mode == "debug":
+#         rows = (
+#             supabase
+#             .table("participant")
+#             .select("name, mode, D-score, D-time")
+#             .eq("mode", "debug")
+#             .order("D-score", desc=True)
+#             .order("D-time", desc=True)
+#             .execute()
+#             .data
+#         )
 
-        ranked = [
-            {
-                "rank": i + 1,
-                "name": r["name"],
-                "score": r["D-score"],
-                "time": r["D-time"],
-                "mode": "debug"
-            }
-            for i, r in enumerate(rows)
-        ]
+#         ranked = [
+#             {
+#                 "rank": i + 1,
+#                 "name": r["name"],
+#                 "score": r["D-score"],
+#                 "time": r["D-time"],
+#                 "mode": "debug"
+#             }
+#             for i, r in enumerate(rows)
+#         ]
 
-        return templates.TemplateResponse(
-            "admin.html",
-            {
-                "request": request,
-                "participants": ranked,
-                "mode": "debug"
-            }
-        )
+#         return templates.TemplateResponse(
+#             "admin.html",
+#             {
+#                 "request": request,
+#                 "participants": ranked,
+#                 "mode": "debug"
+#             }
+#         )
 
-@app.get("/register", response_class=HTMLResponse)
-def register_form(request: Request):
-    return templates.TemplateResponse("register.html", {"request": request})
+# @app.get("/register", response_class=HTMLResponse)
+# def register_form(request: Request):
+#     return templates.TemplateResponse("register.html", {"request": request})
 
-BUCKET = "filestore"
+# BUCKET = "filestore"
 
-@app.post("/register")
-async def register_user(
-    fullname: str = Form(...),
-    email: str = Form(...),
-    contact: str = Form(...),
-    college: str = Form(...),
-    payment_proof: UploadFile = File(...)
-):
-    if payment_proof.content_type not in ["image/jpeg", "image/png", "image/jpg"]:
-        return {"success": False, "message": "Invalid file type"}
+# @app.post("/register")
+# async def register_user(
+#     fullname: str = Form(...),
+#     email: str = Form(...),
+#     contact: str = Form(...),
+#     college: str = Form(...),
+#     payment_proof: UploadFile = File(...)
+# ):
+#     if payment_proof.content_type not in ["image/jpeg", "image/png", "image/jpg"]:
+#         return {"success": False, "message": "Invalid file type"}
 
-    username = re.sub(r"[^a-zA-Z0-9]", "_", fullname.strip().lower())
-    ext = payment_proof.filename.split(".")[-1]
-    filename = f"{username}.{ext}"
-    path = f"register/{filename}"
+#     username = re.sub(r"[^a-zA-Z0-9]", "_", fullname.strip().lower())
+#     ext = payment_proof.filename.split(".")[-1]
+#     filename = f"{username}.{ext}"
+#     path = f"register/{filename}"
 
-    supabase.storage.from_(BUCKET).upload(
-        path,
-        await payment_proof.read(),
-        {"content-type": payment_proof.content_type}
-    )
+#     supabase.storage.from_(BUCKET).upload(
+#         path,
+#         await payment_proof.read(),
+#         {"content-type": payment_proof.content_type}
+#     )
 
-    file_url = supabase.storage.from_(BUCKET).get_public_url(path)
+#     file_url = supabase.storage.from_(BUCKET).get_public_url(path)
 
-    supabase.table("participant").insert({
-        "name": fullname.strip(),
-        "gmail": email.strip().lower(),
-        "contact": contact.strip(),
-        "fee": file_url,
-        "auth": False
-    }).execute()
-    send_email(
-    "ByteFest Registration Received",
-    f"""
-Hello {fullname},
+#     supabase.table("participant").insert({
+#         "name": fullname.strip(),
+#         "gmail": email.strip().lower(),
+#         "contact": contact.strip(),
+#         "fee": file_url,
+#         "auth": False
+#     }).execute()
+#     send_email(
+#     "ByteFest Registration Received",
+#     f"""
+# Hello {fullname},
 
-Your registration for ByteFest 2026 has been received.
+# Your registration for ByteFest 2026 has been received.
 
-Your application is currently under review.
-Once approved, you will be able to participate in the event.
+# Your application is currently under review.
+# Once approved, you will be able to participate in the event.
 
-Thank you for registering!
+# Thank you for registering!
 
-Team ByteFest
-""",
-    email
-)
-    return {"success": True}
+# Team ByteFest
+# """,
+#     email
+# )
+#     return {"success": True}
 
-@app.get("/qr-hunt", response_class=HTMLResponse)
-def qr_page(request: Request):
-    return templates.TemplateResponse("qr_hunt.html", {"request": request})
+# @app.get("/qr-hunt", response_class=HTMLResponse)
+# def qr_page(request: Request):
+#     return templates.TemplateResponse("qr_hunt.html", {"request": request})
 
-@app.post("/validate-user")
-def validate_user(data: NameRequest):
-    res = supabase.table("participant") \
-        .select("auth, round1") \
-        .eq("gmail", data.full_name.lower()) \
-        .execute()
+# @app.post("/validate-user")
+# def validate_user(data: NameRequest):
+#     res = supabase.table("participant") \
+#         .select("auth, round1") \
+#         .eq("gmail", data.full_name.lower()) \
+#         .execute()
 
-    if not res.data:
-        return {"status": "not_found"}
+#     if not res.data:
+#         return {"status": "not_found"}
 
-    user = res.data[0]
+#     user = res.data[0]
 
-    if user["auth"] is True and user["round1"] is True:
-        return {"status": "ok"}
+#     if user["auth"] is True and user["round1"] is True:
+#         return {"status": "ok"}
 
-    return {"status": "pending"} 
+#     return {"status": "pending"} 
 
 @app.post("/get-answer")
 def get_answer(data: QRScanRequest):
@@ -395,73 +395,73 @@ def get_answer(data: QRScanRequest):
 @app.post("/submit-result")
 def submit_result(data: ResultRequest):
     if data.result == "fail":
-        supabase.table("participant") \
-            .update({"round1": False}) \
-            .eq("gmail", data.full_name.lower()) \
-            .execute()
+        # supabase.table("participant") \
+        #     .update({"round1": False}) \
+        #     .eq("gmail", data.full_name.lower()) \
+        #     .execute()
 
         return {"status": "failed"}
 
     return {"status": "passed"}
 
-@app.get("/approve")
-def approve_get(request: Request):
-    rows = (
-        supabase
-        .table("participant")
-        .select("id, name, gmail, fee, auth")
-        .order("id", desc=True)
-        .execute()
-        .data
-    )
+# @app.get("/approve")
+# def approve_get(request: Request):
+#     # rows = (
+    #     supabase
+    #     .table("participant")
+    #     .select("id, name, gmail, fee, auth")
+    #     .order("id", desc=True)
+    #     .execute()
+    #     .data
+    # )
 
-    return templates.TemplateResponse(
-        "approve.html",
-        {"request": request, "users": rows}
-    )
+    # return templates.TemplateResponse(
+    #     "approve.html",
+    #     {"request": request, "users": rows}
+    # )
 
-@app.post("/approve")
-def approve_post(
-    user_id: int = Form(...),
-    action: str = Form(...)
-):
-    user = (
-        supabase
-        .table("participant")
-        .select("name, gmail")
-        .eq("id", user_id)
-        .single()
-        .execute()
-        .data
-    )
-    if action == "approve":
-        supabase.table("participant") \
-            .update({"auth": True}) \
-            .eq("id", user_id) \
-            .execute()
-        send_email(
-            "ByteFest Registration Approved 🎉",
-            f"""
-Hello {user['name']},
+# @app.post("/approve")
+# def approve_post(
+#     user_id: int = Form(...),
+#     action: str = Form(...)
+# ):
+#     user = (
+#         supabase
+#         .table("participant")
+#         .select("name, gmail")
+#         .eq("id", user_id)
+#         .single()
+#         .execute()
+#         .data
+#     )
+#     if action == "approve":
+#         supabase.table("participant") \
+#             .update({"auth": True}) \
+#             .eq("id", user_id) \
+#             .execute()
+#         send_email(
+#             "ByteFest Registration Approved 🎉",
+#             f"""
+# Hello {user['name']},
 
-Your registration for ByteFest has been approved.
+# Your registration for ByteFest has been approved.
 
-You can now participate in the event.
+# You can now participate in the event.
 
-Good luck and see you at ByteFest!
+# Good luck and see you at ByteFest!
 
-Team ByteFest
-""",
-            user["gmail"]
-        )
+# Team ByteFest
+# """,
+#             user["gmail"]
+#         )
 
-    elif action == "decline":
-        supabase.table("participant") \
-            .delete() \
-            .eq("id", user_id) \
-            .execute()
+#     elif action == "decline":
+#         supabase.table("participant") \
+#             .delete() \
+#             .eq("id", user_id) \
+#             .execute()
 
-    return RedirectResponse("/approve", status_code=303)
+#     return RedirectResponse("/approve", status_code=303)
 
 QR_DIR = BASE_DIR / "static" / "qr"
 os.makedirs(QR_DIR, exist_ok=True)
